@@ -8,6 +8,14 @@ SCHEMA = """
 CREATE TABLE IF NOT EXISTS conversations (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	titre TEXT NOT NULL,
+	resume TEXT NOT NULL DEFAULT '',
+	nb_messages_resumes INTEGER NOT NULL DEFAULT 0,
+	cree_le TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS souvenirs (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	contenu TEXT NOT NULL,
 	cree_le TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -28,9 +36,18 @@ def connexion():
 	conn.execute("PRAGMA foreign_keys = ON")
 	return conn
 
+COLONNES_AJOUTEES = {
+	"resume": "TEXT NOT NULL DEFAULT ''",
+	"nb_messages_resumes": "INTEGER NOT NULL DEFAULT 0",
+}
+
 def initialiser():
 	with connexion() as conn:
 		conn.executescript(SCHEMA)
+		colonnes = {ligne["name"] for ligne in conn.execute("PRAGMA table_info(conversations)")}
+		for nom, definition in COLONNES_AJOUTEES.items():
+			if nom not in colonnes:
+				conn.execute(f"ALTER TABLE conversations ADD COLUMN {nom} {definition}")
 
 def lister_conversations():
 	with connexion() as conn:
@@ -70,6 +87,34 @@ def ajouter_message(conversation_id, role, contenu):
 			"INSERT INTO messages (conversation_id, role, contenu) VALUES (?, ?, ?)",
 			(conversation_id, role, contenu),
 		)
+
+def lire_resume(conversation_id):
+	with connexion() as conn:
+		ligne = conn.execute(
+			"SELECT resume, nb_messages_resumes FROM conversations WHERE id = ?",
+			(conversation_id,),
+		).fetchone()
+	return ligne["resume"], ligne["nb_messages_resumes"]
+
+def enregistrer_resume(conversation_id, resume, nb_messages_resumes):
+	with connexion() as conn:
+		conn.execute(
+			"UPDATE conversations SET resume = ?, nb_messages_resumes = ? WHERE id = ?",
+			(resume, nb_messages_resumes, conversation_id),
+		)
+
+def lister_souvenirs():
+	with connexion() as conn:
+		lignes = conn.execute("SELECT id, contenu FROM souvenirs ORDER BY id").fetchall()
+	return [dict(ligne) for ligne in lignes]
+
+def ajouter_souvenir(contenu):
+	with connexion() as conn:
+		conn.execute("INSERT INTO souvenirs (contenu) VALUES (?)", (contenu,))
+
+def supprimer_souvenir(souvenir_id):
+	with connexion() as conn:
+		conn.execute("DELETE FROM souvenirs WHERE id = ?", (souvenir_id,))
 
 def importer_json(fichier_json):
 	with open(fichier_json, "r", encoding="utf-8") as fichier:
