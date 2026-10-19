@@ -1,7 +1,7 @@
 import groq
 import streamlit as st
 import db
-from llm_agent import ask_llm, extraire_souvenirs, generer_titre, resumer
+from jagvis_agent import ask_llm, extraire_souvenirs, generer_titre, resumer
 
 TAILLE_FENETRE = 20
 SEUIL_RESUME = 30
