@@ -218,3 +218,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# historique conv
+conv.json
+
+# Base de données locale
+jagvis.db
