@@ -26,7 +26,16 @@ def ask_llm(historique):
         "content": read_file(file_path="./context.txt")
     }
     derniers_messages = historique[-20:]
-    return demander([message_system] + derniers_messages)
+    flux = client.chat.completions.create(
+        messages=[message_system] + derniers_messages,
+        model=MODELE,
+        include_reasoning=False,
+        stream=True,
+    )
+    for morceau in flux:
+        texte = morceau.choices[0].delta.content
+        if texte:
+            yield texte
 
 def generer_titre(question, reponse):
     consigne = (
@@ -38,6 +47,7 @@ def generer_titre(question, reponse):
 
 if __name__ == "__main__":
     question = input("Pose ta question :\n")
-    response = ask_llm([{"role": "user", "content": question}])
     print("\n")
-    print(response)
+    for texte in ask_llm([{"role": "user", "content": question}]):
+        print(texte, end="", flush=True)
+    print()

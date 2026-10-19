@@ -1,3 +1,4 @@
+import groq
 import streamlit as st
 import db
 from llm_agent import ask_llm, generer_titre
@@ -64,10 +65,18 @@ if user_input :
 	messages.append(
 		{"role": "user", "content": user_input}
 		)
-	response = ask_llm(messages)
-	with st.chat_message("assistant"):
-		st.markdown(response)
-	db.ajouter_message(st.session_state.actuelle, "assistant", response)
-	if nouvelle_conversation:
-		db.renommer_conversation(st.session_state.actuelle, generer_titre(user_input, response))
-	st.rerun()
+	try:
+		with st.chat_message("assistant"):
+			response = st.write_stream(ask_llm(messages))
+		db.ajouter_message(st.session_state.actuelle, "assistant", response)
+		if nouvelle_conversation:
+			db.renommer_conversation(st.session_state.actuelle, generer_titre(user_input, response))
+		st.rerun()
+	except groq.AuthenticationError:
+		st.error("La clé API Groq est invalide. Vérifie GROQ_KEY dans le fichier .env.")
+	except groq.RateLimitError:
+		st.error("Trop de requêtes envoyées à Groq. Attends un peu puis réessaie.")
+	except groq.APIConnectionError:
+		st.error("Impossible de joindre Groq. Vérifie ta connexion internet.")
+	except groq.APIError as erreur:
+		st.error(f"Groq a renvoyé une erreur : {erreur}")
