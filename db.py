@@ -46,6 +46,16 @@ def creer_conversation(titre):
 		)
 	return curseur.lastrowid
 
+def renommer_conversation(conversation_id, titre):
+	with connexion() as conn:
+		conn.execute(
+			"UPDATE conversations SET titre = ? WHERE id = ?", (titre, conversation_id)
+		)
+
+def supprimer_conversation(conversation_id):
+	with connexion() as conn:
+		conn.execute("DELETE FROM conversations WHERE id = ?", (conversation_id,))
+
 def lire_messages(conversation_id):
 	with connexion() as conn:
 		lignes = conn.execute(
