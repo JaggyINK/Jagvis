@@ -11,7 +11,7 @@ class ConversationAgent:
         self.conversation_history = [
                 {
                     "role": "system",
-                    "content": read_file(file_path="./context.txt")
+                    "content": self.read_file(file_path="./context.txt")
                 }
             ]
 
@@ -31,6 +31,13 @@ class ConversationAgent:
         )
 
 
+    def get_displayable_history(self):
+        return [
+            message for message in self.conversation_history
+            if message["role"] != "system"
+        ]
+
+
     def ask_llm(self, question):
 
         self.update_conversation_history(role="user", content=question)
@@ -43,6 +50,8 @@ class ConversationAgent:
 
 
         self.update_conversation_history(role="assistant", content=response)
+
+        return response
 
 
 
@@ -74,6 +83,7 @@ class ConversationAgent:
 
 if __name__ == "__main__":
     question = input("Pose ta question :\n")
-    response = ask_llm(question)
+    agent = ConversationAgent()
+    response = agent.ask_llm(question)
     print("\n")
     print(response)
