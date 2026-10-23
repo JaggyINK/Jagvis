@@ -8,7 +8,7 @@ import chess.engine
 
 from jagvis_chess.errors import ConfigError, GameOver, ServiceDown
 from jagvis_chess.model import Color, Move, color_from_turn
-from jagvis_chess.results import Analysis, BadMove, Evaluation, severity_of
+from jagvis_chess.results import Analysis, BadMove, Evaluation, move_accuracy, move_loss, severity_of
 
 MIN_DEPTH = 1
 MAX_DEPTH = 30
@@ -89,19 +89,22 @@ class ChessEngine:
         finally:
             self._close(engine)
 
+        # Turn the white scores into scores seen by the player.
         sign = 1 if game.player_color == Color.WHITE else -1
         bad_moves = []
-        player_moves = 0
+        marks = []
         for number, move in enumerate(game.moves):
             if move.color != game.player_color:
                 continue
-            player_moves += 1
-            loss = sign * scores[number] - sign * scores[number + 1]
+            before = sign * scores[number]
+            after = sign * scores[number + 1]
+            marks.append(move_accuracy(before, after))
+            loss = move_loss(before, after)
             severity = severity_of(loss)
             if severity:
                 bad_moves.append(BadMove(move, loss, severity))
 
-        if player_moves == 0:
+        if not marks:
             return Analysis(accuracy=100.0, bad_moves=[])
-        accuracy = 100 * (player_moves - len(bad_moves)) / player_moves
-        return Analysis(accuracy=accuracy, bad_moves=bad_moves)
+        # The game accuracy is the average mark of the player moves.
+        return Analysis(accuracy=sum(marks) / len(marks), bad_moves=bad_moves)

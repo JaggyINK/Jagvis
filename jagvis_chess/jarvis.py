@@ -5,7 +5,7 @@ Jarvis cannot do anything alone: he gets his six tools in his constructor
 """
 from jagvis_chess.errors import BoardNotFound, GameOver, InvalidFen, NoGame, NotAllowed, ServiceDown
 from jagvis_chess.model import Color, Game, GameMode, Move, Position, color_from_turn
-from jagvis_chess.results import Severity, severity_of
+from jagvis_chess.results import Severity, move_loss, severity_of
 
 REFUSAL = "Official mode: I give no advice during the game. Good luck!"
 
@@ -106,8 +106,8 @@ class Jarvis:
             score_after = self.engine.evaluate(after).score
         except ServiceDown:
             return  # the warning is a bonus: following the game goes on
-        # After the move, the opponent plays: his score is the opposite of ours.
-        loss = score_before + score_after
+        # After the move, the opponent plays: their score is the opposite of ours.
+        loss = move_loss(score_before, -score_after)
         if severity_of(loss) == Severity.BLUNDER:
             self.glasses.speak(f"Watch out: {move.notation} is a blunder!")
 

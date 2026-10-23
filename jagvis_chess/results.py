@@ -2,6 +2,7 @@
 
 Scores are in centipawns: 100 centipawns is about one pawn.
 """
+import math
 from dataclasses import dataclass
 from enum import Enum
 
@@ -11,6 +12,8 @@ from jagvis_chess.model import Move
 INACCURACY_LOSS = 50
 MISTAKE_LOSS = 100
 BLUNDER_LOSS = 300
+# Above +1000 (or under -1000) the game is already won (or lost): we stop counting.
+SCORE_CAP = 1000
 
 
 class Severity(Enum):
@@ -28,6 +31,27 @@ def severity_of(loss):
     if loss >= INACCURACY_LOSS:
         return Severity.INACCURACY
     return None
+
+
+def capped(score):
+    return max(-SCORE_CAP, min(SCORE_CAP, score))
+
+
+def move_loss(score_before, score_after):
+    """Centipawns lost by a move. Both scores are seen by the player who moved."""
+    return max(0, capped(score_before) - capped(score_after))
+
+
+def win_chance(score):
+    """Chance to win, in percent, for a score in centipawns (formula used by Lichess)."""
+    return 50 + 50 * (2 / (1 + math.exp(-0.00368208 * score)) - 1)
+
+
+def move_accuracy(score_before, score_after):
+    """Mark of one move from 0 to 100: the more win chance is lost, the lower (Lichess formula)."""
+    drop = max(0, win_chance(capped(score_before)) - win_chance(capped(score_after)))
+    mark = 103.1668 * math.exp(-0.04354 * drop) - 3.1669
+    return max(0, min(100, mark))
 
 
 @dataclass(frozen=True)
