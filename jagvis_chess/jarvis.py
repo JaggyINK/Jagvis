@@ -71,12 +71,12 @@ class Jarvis:
 
     def suggest_move(self):
         game = self._game()
-        photo = self.glasses.take_photo()
-        position = self.board_reader.read_position(photo)
+        # Fair play first: in official mode, no photo is even taken.
         if not game.can_advise():
             self.glasses.speak(REFUSAL)
             return REFUSAL
-        position = with_turn(position, game.player_color)
+        photo = self.glasses.take_photo()
+        position = with_turn(self.board_reader.read_position(photo), game.player_color)
         evaluation = self.engine.evaluate(position)
         advice = f"Best move: {evaluation.best_move.notation}."
         advice += self._explanation(position, evaluation)
