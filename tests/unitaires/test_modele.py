@@ -178,3 +178,14 @@ def test_MOD10_le_pgn_est_relu_par_python_chess():
     assert relue.headers["Date"] == "2026.10.23"
     assert relue.headers["White"] == "Joueur"
     assert relue.headers["Result"] == "0-1"
+
+
+def test_MOD10_le_joueur_noir_est_a_droite_dans_le_pgn():
+    relue = chess.pgn.read_game(io.StringIO(partie_avec(["e4"], couleur=Couleur.NOIR).vers_pgn()))
+
+    assert (relue.headers["White"], relue.headers["Black"]) == ("Adversaire", "Joueur")
+    assert relue.headers["Event"] == "Jarvis Échecs (amical)"
+
+
+def test_MOD03_une_position_s_affiche_avec_sa_fen():
+    assert repr(Position(DEPART)) == f"Position({DEPART!r})"

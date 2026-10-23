@@ -149,3 +149,29 @@ def test_MOT07_le_vrai_stockfish_trouve_le_mat_en_un():
 
     assert evaluation.meilleur_coup.notation == "Ra8#"
     assert evaluation.mat_en == 1
+
+
+class MoteurDejaArrete(FauxMoteurUCI):
+    def quit(self):
+        raise chess.engine.EngineTerminatedError("déjà arrêté")
+
+
+def test_MOT05_fermer_un_stockfish_deja_arrete_ne_plante_pas():
+    uci = MoteurDejaArrete(meilleurs={DEPART: "e2e4"})
+
+    evaluation = MoteurEchecs(ouvrir_moteur=uci.ouvrir).evaluer(Position(chess.STARTING_FEN))
+
+    assert evaluation.meilleur_coup.notation == "e4"
+
+
+def test_MOT06_un_pat_vaut_zero_sans_appeler_stockfish():
+    pat = [
+        "e3", "a5", "Qh5", "Ra6", "Qxa5", "h5", "h4", "Rah6", "Qxc7", "f6",
+        "Qxd7+", "Kf7", "Qxb7", "Qd3", "Qxb8", "Qh7", "Qxc8", "Kg6", "Qe6",
+    ]
+    uci = FauxMoteurUCI()
+
+    analyse = MoteurEchecs(ouvrir_moteur=uci.ouvrir).analyser(partie_avec(pat))
+
+    assert len(uci.positions_analysees) == len(pat)  # la position de pat n'est pas envoyée
+    assert analyse.erreurs == []
