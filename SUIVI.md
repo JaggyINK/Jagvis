@@ -98,7 +98,7 @@ Variables d'environnement (fichier `.env`, jamais commité) :
 
 ---
 
-## 3. Le code est en anglais : correspondance avec le diagramme
+## 3. Le code est en anglais (commentaires en français) : correspondance avec le diagramme
 
 Tu as demandé du code en anglais, avec des noms simples. Le diagramme du prof
 reste en français dans `docs/diagrams/`. Voici la table pour passer de l'un à l'autre.
@@ -134,6 +134,9 @@ reste en français dans `docs/diagrams/`. Voici la table pour passer de l'un à 
 
 `Erreur` est devenu `BadMove` (« mauvais coup ») pour ne pas confondre avec les
 erreurs Python (`errors.py`) ni avec `Severity.MISTAKE`.
+
+**Les commentaires sont en français** (demande n°5), courts et seulement là où
+ils aident. Les docstrings qui répétaient le nom des fonctions ont été retirées.
 
 Les messages que Jarvis dit au joueur sont aussi en anglais, pour que tout le code
 soit dans une seule langue. On peut les traduire plus tard en un seul endroit par
@@ -312,7 +315,7 @@ ne vérifient jamais le texte d'un LLM, seulement des effets.
 
 ## 10. Résultats actuels
 
-- `pytest` : **202 tests réussis**, 3 désélectionnés (`@stockfish`, `@groq`).
+- `pytest` : **201 tests réussis**, 3 désélectionnés (`@stockfish`, `@groq`).
 - Couverture : **100 %** de `jagvis_chess`. Seules les 2 lignes
   `if __name__ == "__main__"` de `console.py` sont exclues ; elles sont testées en
   sous-processus par E4 et E5.
@@ -355,4 +358,4 @@ ne vérifient jamais le texte d'un LLM, seulement des effets.
 | 2 | 23/10/2026 | Recos du TP, architecture adaptée au diagramme, garde-fous, fichier de suivi | Branche `feature/jarvis-echecs` en TDD, 185 tests, 100 %, création de `SUIVI.md` |
 | 3 | 23/10/2026 | Repo renommé ; code en anglais simple ; décider seul de la section 4 ; supprimer les fichiers inutiles | `origin` → `Jagvis.git` ; branches vérifiées ; code traduit (`jagvis_chess`) ; décisions 4, 5 et 7 changées + plafond des scores + roques (TDD) ; suppression de `__main__.py`, `.coveragerc`, des `__init__.py` vides des tests et de 2 copies en double ; 202 tests, 100 % |
 | 4 | 23/10/2026 | Les fichiers de l'appli (`db.py`, `jagvis_agent.py`…) sont-ils nécessaires ? Si non, les effacer ; architecture propre | Ils formaient l'appli de conversation : retirés de cette branche à ta demande (toujours sur `main`) ; `jagvis.db` supprimé par toi ; diagrammes rangés dans `docs/diagrams/` avec des noms anglais ; `streamlit` retiré des dépendances ; `.gitignore` réduit à l'utile ; README réécrit ; branche renommée `feature/jarvis-chess` ; 202 tests, 100 % |
-| 5 | 23/10/2026 | Pousser, mettre à jour le suivi, écrire un fichier qui explique le schéma de l'app | `docs/ARCHITECTURE.md` (cas d'utilisation, classes, flux, garde-fous, tests, avec schémas Mermaid) ; suivi à jour ; push de `feature/jarvis-chess` et mise à jour de `prof` |
+| 5 | 23/10/2026 | Pousser ; mettre à jour le suivi ; expliquer le schéma de l'app ; humaniser et simplifier le code ; commentaires en français | `docs/ARCHITECTURE.md` (cas d'utilisation, classes, flux, garde-fous, tests, schémas Mermaid) ; code simplifié (docstrings inutiles, `__repr__`, `__init__.py` du paquet retirés), commentaires courts et en français ; 201 tests, 100 % ; push de `feature/jarvis-chess` et mise à jour de `prof` |

@@ -1,8 +1,5 @@
-"""Acceptance tests: the stories of the use case diagram.
-
-The real Jarvis parts are put together. Only the outside services are fake:
-Groq (FakeGroqClient), Stockfish (FakeUciEngine) and the glasses.
-"""
+# Tests d'acceptation : les scénarios du diagramme de cas d'utilisation.
+# Les vraies classes sont assemblées ; seuls Groq, Stockfish et les lunettes sont faux.
 import io
 
 import chess
@@ -67,7 +64,7 @@ def test_E2_no_advice_in_official_mode(tmp_path):
 
     assert advice == REFUSAL
     assert glasses.spoken[-1] == REFUSAL
-    assert glasses.photos == [PNG_PHOTO]  # the photo was never taken
+    assert glasses.photos == [PNG_PHOTO]  # la photo n'a jamais été prise
     assert vision.calls == [] and text.calls == []
     assert uci.analysed_positions == []
 
@@ -75,7 +72,7 @@ def test_E2_no_advice_in_official_mode(tmp_path):
 def test_E3_followed_game_blunder_warning_then_analysis(tmp_path):
     moves = ["f3", "e5", "g4", "Qh4#"]
     vision = FakeGroqClient([pieces_after(*moves[: i + 1]) for i in range(len(moves))])
-    # After g4, black mates in one: seen by white, this is Mate(-1).
+    # Après g4, les Noirs matent en un : vu par les Blancs, c'est Mate(-1).
     uci = FakeUciEngine(mates={pieces_after("f3", "e5", "g4"): -1})
     glasses = FakeGlasses(photos=[PNG_PHOTO] * len(moves))
     jarvis = build_jarvis(tmp_path, glasses, vision, FakeGroqClient([]), uci)

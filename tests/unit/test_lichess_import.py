@@ -22,7 +22,7 @@ RATED_PGN = """[Event "Rated Blitz game"]
 
 
 class FakeDownload:
-    """Replaces the HTTP call: gives a prepared text and writes down the requests."""
+    # Remplace l'appel HTTP et note les requêtes.
 
     def __init__(self, text=RATED_PGN):
         self.text = text
@@ -158,8 +158,8 @@ def test_LIC06_network_problems(mocker, problem, expected_error, message):
     "username, color",
     [
         ("alice", Color.WHITE),
-        ("BOB", Color.BLACK),  # upper or lower case does not matter
-        ("carol", Color.WHITE),  # not in this game: white by default
+        ("BOB", Color.BLACK),  # majuscules ou minuscules, peu importe
+        ("carol", Color.WHITE),  # absent de la partie : Blancs par défaut
         (None, Color.WHITE),
     ],
 )

@@ -18,7 +18,7 @@ E4 = Move("e4", Color.WHITE)
 @pytest.mark.parametrize(
     "loss, severity",
     [
-        (-30, None),  # the move was better than expected
+        (-30, None),  # le coup était meilleur que prévu
         (0, None),
         (49, None),
         (50, Severity.INACCURACY),
@@ -78,9 +78,9 @@ def test_RES04_summary_without_bad_moves():
     "before, after, loss",
     [
         (100, -100, 200),
-        (0, -10000, 1000),  # scores are capped at 1000: a mate counts like +1000
-        (2000, 1500, 0),  # still winning big: this is not a bad move
-        (-50, 20, 0),  # the position got better: no loss
+        (0, -10000, 1000),  # scores plafonnés à 1000 : un mat compte comme +1000
+        (2000, 1500, 0),  # on gagne toujours largement : pas un mauvais coup
+        (-50, 20, 0),  # la position s'est améliorée : pas de perte
     ],
 )
 def test_RES05_loss_of_a_move_with_capped_scores(before, after, loss):
@@ -96,9 +96,9 @@ def test_RES06_win_chance_in_percent():
 @pytest.mark.parametrize(
     "before, after, low, high",
     [
-        (0, 0, 99.9, 100),  # nothing lost: perfect move
-        (30, 0, 80, 99.9),  # a tiny loss: still good
-        (0, -10000, 0, 15),  # gives a mate: very bad
+        (0, 0, 99.9, 100),  # rien de perdu : coup parfait
+        (30, 0, 80, 99.9),  # une toute petite perte : encore bon
+        (0, -10000, 0, 15),  # laisse un mat : très mauvais
     ],
 )
 def test_RES07_accuracy_of_one_move(before, after, low, high):

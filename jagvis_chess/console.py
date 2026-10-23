@@ -1,7 +1,4 @@
-"""Console: talk to Jarvis by typing commands in the terminal.
-
-Start it with: python -m jagvis_chess.console
-"""
+# Lancement : python -m jagvis_chess.console
 import os
 import sys
 
@@ -26,7 +23,6 @@ COLORS = {color.value: color for color in Color}
 
 
 def run_command(jarvis, command):
-    """Run one command. Give back the help text if the command is not understood."""
     words = command.lower().split()
     if words == ["advice"]:
         jarvis.suggest_move()
@@ -43,7 +39,6 @@ def run_command(jarvis, command):
     elif len(words) == 3 and words[0] == "new" and words[1] in MODES and words[2] in COLORS:
         jarvis.start_game(MODES[words[1]], COLORS[words[2]])
     elif len(words) == 2 and words[0] == "import":
-        # Keep the original word: Lichess ids care about upper and lower case.
         jarvis.import_game(command.split()[1])
     else:
         return HELP
@@ -69,7 +64,6 @@ def run(jarvis, glasses):
 
 
 def build_jarvis():
-    """Build the real Jarvis. Raises ConfigError if GROQ_KEY is missing."""
     return Jarvis(
         glasses=ConsoleGlasses(),
         board_reader=BoardReader(),
@@ -94,5 +88,5 @@ def main():
     return 0
 
 
-if __name__ == "__main__":  # pragma: no cover (tested in a subprocess by test_cli.py)
+if __name__ == "__main__":  # pragma: no cover
     sys.exit(main())

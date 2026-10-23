@@ -1,9 +1,3 @@
-"""History: each game is saved as one JSON file in a folder.
-
-A file <id>.json looks like this:
-{"id": "...", "date": "2026-10-23T14:05:00", "mode": "official",
- "player_color": "black", "moves": [{"notation": "e4", "color": "white"}]}
-"""
 import json
 import re
 from datetime import datetime
@@ -12,7 +6,7 @@ from pathlib import Path
 from jagvis_chess.errors import BrokenSaveFile, GameNotFound, InvalidId, JagvisError
 from jagvis_chess.model import Color, Game, GameMode, Move
 
-# Only letters, digits, "_" and "-": an id like "../secret" cannot leave the folder.
+# Ni "/" ni "." : un id comme "../secret" ne peut pas sortir du dossier.
 VALID_ID = re.compile(r"[A-Za-z0-9_-]{1,64}")
 
 
@@ -32,13 +26,12 @@ def game_to_dict(game):
 
 
 def game_from_dict(data):
-    moves = [Move(move["notation"], Color(move["color"])) for move in data["moves"]]
     return Game(
         mode=GameMode(data["mode"]),
         player_color=Color(data["player_color"]),
         id=data["id"],
         date=datetime.fromisoformat(data["date"]),
-        moves=moves,
+        moves=[Move(move["notation"], Color(move["color"])) for move in data["moves"]],
     )
 
 
@@ -70,5 +63,5 @@ class History:
             try:
                 games.append(self.load(file.stem))
             except (BrokenSaveFile, InvalidId):
-                continue  # one broken file must not hide the other games
+                continue  # on saute les fichiers abîmés, on montre les autres
         return sorted(games, key=lambda game: game.date)

@@ -1,11 +1,11 @@
-"""End-to-end tests: we really start "python -m jagvis_chess.console" in a subprocess."""
+# Tests de bout en bout : on lance vraiment « python -m jagvis_chess.console ».
 import os
 import subprocess
 import sys
 
 
 def start_jarvis(tmp_path, groq_key, typed_text):
-    # A variable that is already set (even empty) is not replaced by the .env file.
+    # Une variable déjà définie (même vide) n'est pas remplacée par le fichier .env.
     env = {**os.environ, "GROQ_KEY": groq_key, "JAGVIS_GAMES": str(tmp_path / "games")}
     return subprocess.run(
         [sys.executable, "-m", "jagvis_chess.console"],

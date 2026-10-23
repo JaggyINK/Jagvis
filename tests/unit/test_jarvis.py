@@ -23,7 +23,7 @@ E4_ADVICE = Evaluation(best_move=E4, score=30)
 
 
 def position_after(*san_moves, turn="w"):
-    """Position seen by the camera: only where the pieces are matters."""
+    # Position vue par la caméra : seul le placement des pièces compte.
     board = chess.Board()
     for san in san_moves:
         board.push_san(san)
@@ -31,7 +31,7 @@ def position_after(*san_moves, turn="w"):
 
 
 class SpyGame(Game):
-    """A real Game that writes in the log when someone calls can_advise()."""
+    # Une vraie Game qui note dans le journal chaque appel à can_advise().
 
     def __init__(self, log, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -44,7 +44,7 @@ class SpyGame(Game):
 
 @pytest.fixture
 def tools():
-    """All the fake tools of Jarvis, writing in the same log."""
+    # Tous les faux outils de Jarvis, avec un journal commun.
     log = []
     return SimpleNamespace(
         log=log,
@@ -77,7 +77,7 @@ def jarvis_with_game(tools, mode=GameMode.TRAINING, color=Color.WHITE, moves=())
     return jarvis
 
 
-# --- JAR-01 and JAR-02: build and start ------------------------------------------
+# --- JAR-01 et JAR-02 : création et démarrage ------------------------------------------
 
 
 def test_JAR01_jarvis_gets_his_tools_and_has_no_game(tools):
@@ -102,7 +102,7 @@ def test_JAR02_start_a_game(tools):
     assert tools.glasses.spoken == ["New friendly game: you play black."]
 
 
-# --- JAR-03 to JAR-07: suggest_move -------------------------------------------------
+# --- JAR-03 à JAR-07 : suggest_move -------------------------------------------------
 
 
 def test_JAR03_advice_checks_the_fair_play_rule_first(tools):
@@ -125,7 +125,7 @@ def test_JAR04_official_mode_refuses_without_photo_engine_or_llm(tools):
     advice = jarvis.suggest_move()
 
     assert advice == REFUSAL
-    assert tools.log == ["can_advise", "speak"]  # no photo is taken or sent
+    assert tools.log == ["can_advise", "speak"]  # aucune photo prise ni envoyée
     assert tools.glasses.spoken == [REFUSAL]
 
 
@@ -138,11 +138,11 @@ def test_JAR05_nothing_without_a_current_game(tools, action):
 
     with pytest.raises(NoGame, match="No current game: start or import a game."):
         getattr(jarvis, action)()
-    assert tools.log == []  # not even a photo
+    assert tools.log == []  # pas même une photo
 
 
 def test_JAR06_the_advice_is_for_the_player_side(tools):
-    # The camera does not know who plays next: Jarvis sets the player color.
+    # La caméra ne sait pas qui doit jouer : Jarvis impose la couleur du joueur.
     tools.board_reader.positions = [position_after("e4", turn="w")]
     jarvis = jarvis_with_game(tools, color=Color.BLACK)
 
@@ -152,7 +152,7 @@ def test_JAR06_the_advice_is_for_the_player_side(tools):
 
 
 def test_JAR06_position_impossible_for_the_player(tools):
-    # Black is in check: it cannot be white's turn.
+    # Les Noirs sont en échec : ce ne peut pas être aux Blancs de jouer.
     tools.board_reader.positions = [position_after("e4", "f5", "Qh5+", turn="b")]
     jarvis = jarvis_with_game(tools, color=Color.WHITE)
 
@@ -180,7 +180,7 @@ def test_JAR07_other_problems_go_up(tools):
     assert tools.glasses.spoken == []
 
 
-# --- JAR-08 and JAR-09: follow_game ------------------------------------------------------
+# --- JAR-08 et JAR-09 : follow_game ------------------------------------------------------
 
 
 def test_JAR08_follow_records_the_seen_move(tools):
@@ -191,7 +191,7 @@ def test_JAR08_follow_records_the_seen_move(tools):
 
     assert jarvis.current_game.moves == [E4]
     assert tools.glasses.shown == ["Move played: e4"]
-    assert "evaluate" not in tools.log  # official mode: no engine during the game
+    assert "evaluate" not in tools.log  # mode officiel : pas de moteur pendant la partie
 
 
 def test_JAR08_nothing_changes_if_the_position_is_the_same(tools):
@@ -205,7 +205,7 @@ def test_JAR08_nothing_changes_if_the_position_is_the_same(tools):
 
 
 def test_JAR08_impossible_seen_position(tools):
-    tools.board_reader.positions = [position_after("e4", "e5")]  # two moves at once
+    tools.board_reader.positions = [position_after("e4", "e5")]  # deux coups d'un coup
     jarvis = jarvis_with_game(tools)
 
     with pytest.raises(BoardNotFound, match="The position on the photo does not match any legal move."):
@@ -233,7 +233,7 @@ def evaluations(before, after_for_opponent):
 
 def test_JAR09_warning_when_the_player_blunders(tools):
     tools.board_reader.positions = [position_after("e4")]
-    tools.engine.evaluations = evaluations(before=20, after_for_opponent=400)  # loss: 420
+    tools.engine.evaluations = evaluations(before=20, after_for_opponent=400)  # perte : 420
     jarvis = jarvis_with_game(tools, mode=GameMode.FRIENDLY)
 
     jarvis.follow_game()
@@ -244,7 +244,7 @@ def test_JAR09_warning_when_the_player_blunders(tools):
 
 def test_JAR09_no_warning_for_a_simple_mistake(tools):
     tools.board_reader.positions = [position_after("e4")]
-    tools.engine.evaluations = evaluations(before=20, after_for_opponent=200)  # loss: 220
+    tools.engine.evaluations = evaluations(before=20, after_for_opponent=200)  # perte : 220
     jarvis = jarvis_with_game(tools)
 
     jarvis.follow_game()
@@ -254,7 +254,7 @@ def test_JAR09_no_warning_for_a_simple_mistake(tools):
 
 def test_JAR09_no_warning_when_still_winning_big(tools):
     tools.board_reader.positions = [position_after("e4")]
-    # From +2000 to +1500 for the player: capped, both count as +1000.
+    # De +2000 à +1500 pour le joueur : plafonnés, les deux valent +1000.
     tools.engine.evaluations = evaluations(before=2000, after_for_opponent=-1500)
     jarvis = jarvis_with_game(tools)
 
@@ -293,7 +293,7 @@ def test_JAR10_explain_the_last_move(tools):
     text = jarvis.explain_move()
 
     assert text == "Last move: e4. The best move was d4. Coach explanation."
-    assert tools.engine.evaluated_positions == [Position(START)]  # the position BEFORE the move
+    assert tools.engine.evaluated_positions == [Position(START)]  # la position AVANT le coup
     assert tools.glasses.spoken == [text]
 
 

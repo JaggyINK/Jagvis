@@ -1,9 +1,3 @@
-"""Glasses: what Jarvis needs from the smart glasses.
-
-Glasses is an interface (an abstract class). When we get the Meta glasses SDK,
-we just write a new subclass. Until then, ConsoleGlasses uses the terminal:
-the "photo" is an image file on the disk.
-"""
 from abc import ABC, abstractmethod
 from pathlib import Path
 
@@ -11,25 +5,27 @@ from jagvis_chess.errors import InvalidPhoto
 
 
 class Glasses(ABC):
+    # Quand on aura le SDK des lunettes Meta, il suffira d'écrire une sous-classe.
+
     @abstractmethod
     def take_photo(self):
-        """Give the photo of what the player sees, as bytes (JPEG or PNG)."""
+        """Renvoie la photo de l'échiquier (octets JPEG ou PNG)."""
 
     @abstractmethod
     def listen(self):
-        """Give the sentence said by the player."""
+        """Renvoie la phrase dite par le joueur."""
 
     @abstractmethod
     def speak(self, text):
-        """Say the text out loud."""
+        """Dit le texte à voix haute."""
 
     @abstractmethod
     def show(self, text):
-        """Show the text in the glasses."""
+        """Affiche le texte dans les lunettes."""
 
 
 class ConsoleGlasses(Glasses):
-    """Glasses faked in the terminal. read and write can be swapped in tests."""
+    # Lunettes simulées dans le terminal : la « photo » est un fichier image.
 
     def __init__(self, read=input, write=print):
         self.read = read
@@ -39,7 +35,7 @@ class ConsoleGlasses(Glasses):
         path = self.read("Photo path: ").strip().strip("'\"")
         try:
             return Path(path).read_bytes()
-        except OSError as error:  # missing file, folder, no rights...
+        except OSError as error:
             raise InvalidPhoto(f"Photo not found: {path}") from error
 
     def listen(self):

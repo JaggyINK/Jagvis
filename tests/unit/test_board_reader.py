@@ -32,7 +32,7 @@ def test_BRD01_photo_refused_before_any_call(photo, message):
 
 
 def test_BRD01_the_limit_comes_from_groq_4_mb_of_base64():
-    # base64 makes data one third bigger: 3 MB of photo become 4 MB.
+    # base64 grossit les données d'un tiers : 3 Mo de photo deviennent 4 Mo.
     assert MAX_PHOTO_SIZE == 3 * 1024 * 1024
 
 
@@ -63,9 +63,9 @@ def test_BRD03_the_fen_is_found_in_the_model_text():
 @pytest.mark.parametrize(
     "pieces, castling",
     [
-        ("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR", "KQkq"),  # kings and rooks at home
-        ("rnbq1bnr/ppppkppp/8/4p3/4P3/8/PPPPKPPP/RNBQ1BNR", "-"),  # both kings moved
-        ("1nbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBN1", "Qk"),  # two rooks are gone
+        ("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR", "KQkq"),  # rois et tours à leur place
+        ("rnbq1bnr/ppppkppp/8/4p3/4P3/8/PPPPKPPP/RNBQ1BNR", "-"),  # les deux rois ont bougé
+        ("1nbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBN1", "Qk"),  # deux tours ont disparu
     ],
 )
 def test_BRD04_pieces_only_keep_the_castling_still_possible(pieces, castling):
@@ -82,7 +82,7 @@ def test_BRD04_pieces_only_keep_the_castling_still_possible(pieces, castling):
         ("I do not see a chessboard.", "I could not see a chessboard on the photo."),
         ("8/8/8/8/8/8/8/8 w - - 0 1", "The position on the photo is not valid"),
         ("rnbqkbnr/pppppppp/9/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1", "could not see|not valid"),
-        ("rnbqkbnr/pppppppp/7/8/8/8/PPPPPPPP/RNBQKBNR", "not valid"),  # a row of 7 squares
+        ("rnbqkbnr/pppppppp/7/8/8/8/PPPPPPPP/RNBQKBNR", "not valid"),  # une rangée de 7 cases
     ],
 )
 def test_BRD05_answer_without_a_valid_position(answer, message):
@@ -108,5 +108,5 @@ def test_BRD06_groq_down_or_silent(problem, message):
 def test_BRD07_the_real_model_reads_a_real_photo():
     position = BoardReader().read_position(REAL_PHOTO.read_bytes())
 
-    # We check the effect (a valid position), not the words of the model.
+    # On vérifie l'effet (une position valide), pas les mots du modèle.
     assert isinstance(position, Position)

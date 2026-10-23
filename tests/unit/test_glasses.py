@@ -5,7 +5,7 @@ from jagvis_chess.glasses import ConsoleGlasses, Glasses
 
 
 class FakeTerminal:
-    """Replaces input() and print(): answers are ready, outputs are written down."""
+    # Remplace input() et print().
 
     def __init__(self, answers=()):
         self.answers = list(answers)
@@ -51,7 +51,7 @@ def test_GLS02_speak_show_listen():
 def test_GLS03_take_photo_reads_the_given_file(tmp_path):
     photo = tmp_path / "my board.jpg"
     photo.write_bytes(b"\xff\xd8 bytes")
-    # Dropping a file in the macOS terminal can add quotes around it.
+    # Glisser un fichier dans le terminal macOS ajoute parfois des guillemets.
     glasses, terminal = console_glasses(f"'{photo}' ")
 
     assert glasses.take_photo() == b"\xff\xd8 bytes"

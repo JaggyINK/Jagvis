@@ -1,8 +1,3 @@
-"""BoardReader: photo of the chessboard -> Position (FEN).
-
-We send the photo to a Groq vision model and look for a FEN in its answer.
-The Groq client can be swapped: in the tests, a fake client answers.
-"""
 import base64
 import re
 
@@ -13,15 +8,13 @@ from jagvis_chess.groq_client import ask_groq, make_groq_client
 from jagvis_chess.model import Position
 
 VISION_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct"
-# Groq refuses more than 4 MB of base64 text, so about 3 MB of photo.
-MAX_PHOTO_SIZE = 3 * 1024 * 1024
+MAX_PHOTO_SIZE = 3 * 1024 * 1024  # Groq accepte 4 Mo en base64, soit environ 3 Mo de photo
 
 INSTRUCTIONS = (
     "This is a photo of a chessboard. Answer only with the full FEN of the "
     "position (pieces, side to play, castling, en passant, halfmove, fullmove)."
 )
 
-# One row: pieces (pnbrqk) and digits 1 to 8. Eight rows separated by "/".
 ROW = r"[pnbrqkPNBRQK1-8]{1,8}"
 FEN_IN_TEXT = re.compile(
     rf"({ROW}(?:/{ROW}){{7}})(\s+[wb]\s+(?:-|[KQkq]{{1,4}})\s+(?:-|[a-h][36])\s+\d+\s+\d+)?"
@@ -29,7 +22,6 @@ FEN_IN_TEXT = re.compile(
 
 
 def image_type(photo):
-    """Find the format from the first bytes of the file."""
     if photo.startswith(b"\xff\xd8"):
         return "image/jpeg"
     if photo.startswith(b"\x89PNG"):
@@ -50,22 +42,19 @@ def find_fen(text):
     found = FEN_IN_TEXT.search(text)
     if found is None:
         raise BoardNotFound("I could not see a chessboard on the photo.")
-    pieces, rest = found.group(1), found.group(2)
+    pieces, rest = found.groups()
     if rest:
         return pieces + rest
-    return guess_full_fen(pieces)
+    return complete_fen(pieces)
 
 
-def guess_full_fen(pieces):
-    """The model gave only the pieces: we guess the rest of the FEN.
-
-    White to play. Castling is kept only if the king and the rook are still
-    on their first squares (python-chess removes the impossible ones).
-    """
+def complete_fen(pieces):
+    # Le modèle n'a donné que les pièces : on dit que les Blancs jouent et on garde
+    # les roques encore possibles (roi et tour sur leur case de départ).
     try:
         board = chess.Board(f"{pieces} w KQkq - 0 1")
-    except ValueError:
-        return f"{pieces} w - - 0 1"  # Position() will refuse it with a clear error
+    except ValueError as error:
+        raise BoardNotFound(f"The position on the photo is not valid: {pieces}") from error
     board.castling_rights = board.clean_castling_rights()
     return board.fen()
 

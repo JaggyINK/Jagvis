@@ -1,7 +1,3 @@
-"""LLMAssistant: explains a chess move in plain words, with a Groq LLM.
-
-The Groq client can be swapped: in the tests, a fake client gives the answers.
-"""
 from jagvis_chess.groq_client import ask_groq, make_groq_client
 
 TEXT_MODEL = "openai/gpt-oss-120b"

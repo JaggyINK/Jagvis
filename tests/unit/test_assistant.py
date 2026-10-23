@@ -81,5 +81,5 @@ def test_LLM04_the_real_client_gets_the_key(monkeypatch, mocker):
 def test_LLM05_the_real_groq_explains_a_move():
     text = LLMAssistant().explain(Position(START), EVALUATION)
 
-    # We never check the words of an LLM: only that it answered.
+    # On ne vérifie jamais les mots d'un LLM : seulement qu'il a répondu.
     assert isinstance(text, str) and text.strip()

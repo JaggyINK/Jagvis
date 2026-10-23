@@ -1,22 +1,16 @@
-"""Fake objects for the tests, written by hand.
-
-None of them uses the network or starts Stockfish. Each one writes down what
-it gets, so the tests can check what happened.
-"""
+# Fausses versions écrites à la main pour les tests.
+# Aucune n'utilise le réseau ni ne lance Stockfish : elles notent ce qu'elles reçoivent.
 from types import SimpleNamespace
 
 import chess
 import chess.engine
 
-# Fake bytes that start like a real PNG file.
+# Faux octets qui commencent comme un vrai fichier PNG.
 PNG_PHOTO = b"\x89PNG\r\n\x1a\n" + b"fake image"
 
 
 class FakeGroqClient:
-    """Works like groq.Groq: client.chat.completions.create(...) gives prepared answers.
-
-    An answer can be a text, or an error to raise.
-    """
+    # Imite groq.Groq. Une réponse peut être un texte ou une erreur à lever.
 
     def __init__(self, answers):
         self.answers = list(answers)
@@ -33,11 +27,7 @@ class FakeGroqClient:
 
 
 class FakeUciEngine:
-    """Works like chess.engine.SimpleEngine (the Stockfish program).
-
-    Scores are seen by white, and found by where the pieces are (the first
-    part of the FEN).
-    """
+    # Imite Stockfish. Les scores sont vus par les Blancs et rangés par placement des pièces.
 
     def __init__(self, scores=None, mates=None, best_moves=None):
         self.scores = scores or {}
@@ -71,7 +61,7 @@ class FakeUciEngine:
 
 
 class FakeGlasses:
-    """Replaces the glasses: photos are ready in advance, what Jarvis says is written down."""
+    # Photos préparées à l'avance, et on note tout ce que Jarvis dit.
 
     def __init__(self, photos=(), log=None, heard=()):
         self.photos = list(photos)
@@ -97,8 +87,8 @@ class FakeGlasses:
         self.shown.append(text)
 
 
-# --- Fakes of the Jarvis tools (for tests/unit/test_jarvis.py) ----------------
-# They all write in the same "log": the tests can check the order of the calls.
+# --- Faux outils de Jarvis (pour tests/unit/test_jarvis.py) ---
+# Ils écrivent tous dans le même journal (log) : on peut vérifier l'ordre des appels.
 
 
 class FakeBoardReader:
@@ -117,7 +107,7 @@ class FakeBoardReader:
 
 
 class FakeEngine:
-    """Gives the evaluations in order. When only one is left, it keeps giving it."""
+    # Donne les évaluations dans l'ordre, puis répète la dernière.
 
     def __init__(self, evaluations=(), analysis=None, log=None, failure=None):
         self.evaluations = list(evaluations)

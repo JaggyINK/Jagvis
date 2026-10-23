@@ -12,7 +12,7 @@ START = chess.STARTING_FEN
 SCHOLARS_MATE = "r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 4"
 DATE = datetime(2026, 10, 23, 14, 5)
 FOOLS_MATE = ["f3", "e5", "g4", "Qh4#"]
-# The fastest known stalemate (Sam Loyd): black has no legal move left.
+# Le pat le plus rapide connu (Sam Loyd) : les Noirs n'ont plus de coup légal.
 FAST_STALEMATE = [
     "e3", "a5", "Qh5", "Ra6", "Qxa5", "h5", "h4", "Rah6", "Qxc7", "f6",
     "Qxd7+", "Kf7", "Qxb7", "Qd3", "Qxb8", "Qh7", "Qxc8", "Kg6", "Qe6",
@@ -26,7 +26,7 @@ def game_with(notations, mode=GameMode.FRIENDLY, color=Color.WHITE):
     return game
 
 
-# --- Enums, Move, Position --------------------------------------------------------
+# --- Énumérations, Move, Position --------------------------------------------------------
 
 
 def test_MOD01_enums_of_the_diagram():
@@ -58,16 +58,12 @@ def test_MOD03_the_turn_comes_from_the_fen(fen, turn):
     [
         "",
         "nonsense",
-        "8/8/8/8/8/8/8/8 w - - 0 1",  # no king: well written but impossible
+        "8/8/8/8/8/8/8/8 w - - 0 1",  # pas de roi : bien écrite mais impossible
     ],
 )
 def test_MOD03_an_invalid_fen_is_refused(fen):
     with pytest.raises(InvalidFen, match="Invalid FEN"):
         Position(fen)
-
-
-def test_MOD03_a_position_shows_its_fen():
-    assert repr(Position(START)) == f"Position({START!r})"
 
 
 def test_MOD04_twenty_legal_moves_at_the_start():

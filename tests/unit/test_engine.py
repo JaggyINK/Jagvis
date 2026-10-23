@@ -126,10 +126,10 @@ def test_ENG06_analyze_finds_the_player_blunder():
     analysis = ChessEngine(open_engine=uci.open).analyze(game_with(FOOLS_MATE))
 
     assert [(bad.move.notation, bad.severity) for bad in analysis.bad_moves] == [("g4", Severity.BLUNDER)]
-    assert analysis.bad_moves[0].loss == 1000  # capped score
-    assert 50 < analysis.accuracy < 60  # one perfect move, one very bad move
-    assert uci.opened_paths == ["stockfish"]  # Stockfish starts only once for the game
-    assert len(uci.analysed_positions) == 4  # the final mate position is not sent
+    assert analysis.bad_moves[0].loss == 1000  # score plafonné
+    assert 50 < analysis.accuracy < 60  # un coup parfait, un très mauvais
+    assert uci.opened_paths == ["stockfish"]  # Stockfish n'est lancé qu'une fois
+    assert len(uci.analysed_positions) == 4  # la position de mat n'est pas envoyée
     assert uci.closed
 
 
@@ -171,7 +171,7 @@ def test_ENG06_a_stalemate_is_zero_without_asking_stockfish():
 
     analysis = ChessEngine(open_engine=uci.open).analyze(game_with(FAST_STALEMATE))
 
-    assert len(uci.analysed_positions) == len(FAST_STALEMATE)  # the stalemate is not sent
+    assert len(uci.analysed_positions) == len(FAST_STALEMATE)  # le pat n'est pas envoyé
     assert analysis.bad_moves == []
 
 

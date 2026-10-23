@@ -6,7 +6,7 @@ from jagvis_chess.model import Color, GameMode
 
 
 class FakeJarvis:
-    """Replaces Jarvis: writes down which method was called, with which arguments."""
+    # Note quelle méthode a été appelée, avec quels arguments.
 
     def __init__(self, failure=None):
         self.calls = []
@@ -49,7 +49,7 @@ class FakeGlasses:
 
     def listen(self):
         if not self.sentences:
-            raise EOFError  # Ctrl-D in the terminal
+            raise EOFError  # Ctrl-D dans le terminal
         return self.sentences.pop(0)
 
     def speak(self, text):
@@ -109,7 +109,7 @@ def test_CON03_ctrl_d_quits_cleanly():
 
 
 def test_CON04_without_groq_key_code_2_and_a_clear_message(monkeypatch, mocker, capsys):
-    mocker.patch("jagvis_chess.console.load_dotenv")  # do not read the real .env file
+    mocker.patch("jagvis_chess.console.load_dotenv")  # ne pas lire le vrai fichier .env
     monkeypatch.delenv("GROQ_KEY", raising=False)
 
     code = main()
@@ -122,7 +122,7 @@ def test_CON04_without_groq_key_code_2_and_a_clear_message(monkeypatch, mocker, 
 
 def test_CON04_with_a_key_jarvis_starts_then_quits(monkeypatch, mocker, tmp_path):
     mocker.patch("jagvis_chess.console.load_dotenv")
-    monkeypatch.setenv("GROQ_KEY", "test-key")  # building the Groq client does not use the network
+    monkeypatch.setenv("GROQ_KEY", "test-key")  # créer le client Groq n'utilise pas le réseau
     monkeypatch.setenv("JAGVIS_GAMES", str(tmp_path / "games"))
     fake_run = mocker.patch("jagvis_chess.console.run")
 

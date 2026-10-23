@@ -1,8 +1,3 @@
-"""Jarvis: the conductor.
-
-Jarvis cannot do anything alone: he gets his six tools in his constructor
-(this is called dependency injection). In the tests, each tool is a fake.
-"""
 from jagvis_chess.errors import BoardNotFound, GameOver, InvalidFen, NoGame, NotAllowed, ServiceDown
 from jagvis_chess.model import Color, Game, GameMode, Move, Position, color_from_turn
 from jagvis_chess.results import Severity, move_loss, severity_of
@@ -11,12 +6,12 @@ REFUSAL = "Official mode: I give no advice during the game. Good luck!"
 
 
 def with_turn(position, color):
-    """The camera cannot know who plays next, so we set the turn to `color`."""
+    # Une photo ne dit pas qui doit jouer, donc on le choisit.
     parts = position.fen.split()
     turn = "w" if color == Color.WHITE else "b"
     if parts[1] != turn:
         parts[1] = turn
-        parts[3] = "-"  # en passant makes no sense if we change the turn
+        parts[3] = "-"  # la prise en passant n'a plus de sens
     try:
         return Position(" ".join(parts))
     except InvalidFen as error:
@@ -24,20 +19,16 @@ def with_turn(position, color):
 
 
 def find_played_move(game, seen_position):
-    """Find the legal move that goes from the game to the position on the photo.
-
-    Give None if nothing moved. We only compare where the pieces are: the
-    photo does not say who plays next.
-    """
+    # On essaie chaque coup légal et on garde celui qui donne les pièces de la photo.
     board = game.current_position().to_board()
     seen_pieces = seen_position.fen.split()[0]
     if board.board_fen() == seen_pieces:
         return None
     for chess_move in board.legal_moves:
         board.push(chess_move)
-        is_match = board.board_fen() == seen_pieces
+        found = board.board_fen() == seen_pieces
         board.pop()
-        if is_match:
+        if found:
             return Move(board.san(chess_move), color_from_turn(board.turn))
     raise BoardNotFound("The position on the photo does not match any legal move.")
 
@@ -58,7 +49,7 @@ class Jarvis:
         return self.current_game
 
     def _explanation(self, position, evaluation):
-        """The LLM explanation is a bonus: if the LLM is down, we skip it."""
+        # Si le LLM est en panne, on donne quand même le coup, sans l'explication.
         try:
             return " " + self.assistant.explain(position, evaluation)
         except ServiceDown:
@@ -71,7 +62,6 @@ class Jarvis:
 
     def suggest_move(self):
         game = self._game()
-        # Fair play first: in official mode, no photo is even taken.
         if not game.can_advise():
             self.glasses.speak(REFUSAL)
             return REFUSAL
@@ -86,8 +76,7 @@ class Jarvis:
     def follow_game(self):
         game = self._game()
         photo = self.glasses.take_photo()
-        seen_position = self.board_reader.read_position(photo)
-        move = find_played_move(game, seen_position)
+        move = find_played_move(game, self.board_reader.read_position(photo))
         if move is None:
             return
         before = game.current_position()
@@ -105,10 +94,9 @@ class Jarvis:
             score_before = self.engine.evaluate(before).score
             score_after = self.engine.evaluate(after).score
         except ServiceDown:
-            return  # the warning is a bonus: following the game goes on
-        # After the move, the opponent plays: their score is the opposite of ours.
-        loss = move_loss(score_before, -score_after)
-        if severity_of(loss) == Severity.BLUNDER:
+            return
+        # score_after est le score de l'adversaire, donc on l'inverse
+        if severity_of(move_loss(score_before, -score_after)) == Severity.BLUNDER:
             self.glasses.speak(f"Watch out: {move.notation} is a blunder!")
 
     def explain_move(self):

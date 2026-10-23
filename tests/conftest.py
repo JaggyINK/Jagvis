@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Tests marked "stockfish" or "groq" are skipped when the tool or the key is
-# missing, even if we ask for them with -m.
+# Les tests marqués « stockfish » ou « groq » sont sautés si l'outil ou la clé manque,
+# même quand on les demande avec -m.
 NO_STOCKFISH = shutil.which("stockfish") is None
 NO_GROQ_KEY = not os.environ.get("GROQ_KEY")
 

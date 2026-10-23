@@ -402,7 +402,7 @@ Le projet a été construit en **TDD**, avec un commit à chaque étape :
 **red** (un test qui échoue) → **green** (le code minimal qui le fait passer) →
 **refactor** (on nettoie sans changer le comportement).
 
-Résultat : **202 tests**, **100 %** du code couvert.
+Résultat : **201 tests**, **100 %** du code couvert.
 
 ---
 
@@ -414,7 +414,7 @@ Résultat : **202 tests**, **100 %** du code couvert.
 | 2 | Construction de Jarvis Échecs en TDD à partir du diagramme du prof, avec les recommandations du TP : tests d'acceptation d'abord, fausses versions écrites à la main, erreurs typées |
 | 3 | Code traduit en anglais simple ; choix définitifs : fair-play vérifié en premier, précision façon Lichess, scores plafonnés, camp trouvé avec le pseudo Lichess, roques devinés depuis la photo |
 | 4 | Dossier réservé au projet chess : appli de conversation retirée (elle reste sur `main`), diagrammes rangés dans `docs/diagrams/` |
-| 5 | Ce document, mise à jour du suivi, envoi sur GitHub |
+| 5 | Code simplifié et « humanisé » (moins de commentaires, tous en français), ce document, envoi sur GitHub |
 
 ---
 
