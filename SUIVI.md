@@ -4,7 +4,7 @@
 > fil et à faciliter la revue de code : ce qui est fait, pourquoi, où le vérifier,
 > et ce qui reste à faire.
 >
-> Dernière mise à jour : 23/10/2026, demande n°4. Branche : `feature/jarvis-chess`.
+> Dernière mise à jour : 23/10/2026, demande n°5. Branche : `feature/jarvis-chess`.
 
 ---
 
@@ -37,6 +37,7 @@ Jagvis/
 ├── pytest.ini             réglages des tests (marqueurs stockfish et groq exclus)
 ├── .gitignore             .venv, .env, caches, games/
 ├── docs/
+│   ├── ARCHITECTURE.md      explication de l'app avec schémas (à lire en premier)
 │   └── diagrams/
 │       ├── class_diagram.puml      diagramme de classes du prof
 │       └── use_case_diagram.puml   diagramme de cas d'utilisation du prof
@@ -290,6 +291,7 @@ ne vérifient jamais le texte d'un LLM, seulement des effets.
 
 ## 9. Guide de revue de code (ordre de lecture)
 
+0. `docs/ARCHITECTURE.md` : l'explication de l'app avec des schémas.
 1. `docs/diagrams/*.puml` puis la table du §3 : le contrat.
 2. `jagvis_chess/errors.py` : toutes les erreurs possibles.
 3. `model.py`, puis `results.py`, chacun avec son test dans `tests/unit/`.
@@ -330,13 +332,13 @@ ne vérifient jamais le texte d'un LLM, seulement des effets.
   avance rapide (aucun conflit).
 - `main` local a 1 commit de plus que `origin/main` (README « Jagvis »).
 - `feature/jarvis-chess` (renommée depuis `feature/jarvis-echecs`) n'est pas encore sur GitHub.
-- **Rien n'a été poussé.**
+- **Poussé le 23/10/2026 (demande n°5)** : `feature/jarvis-chess` (nouvelle branche sur GitHub) et `prof` (mise à jour avec `upstream/dev`, en avance rapide). `main` n'a pas été touchée.
 
 ---
 
 ## 12. Reste à faire
 
-- [ ] Ta permission pour pousser : `main`, `feature/jarvis-chess`, et la mise à jour de `prof`.
+- [ ] Décider si on fusionne `feature/jarvis-chess` dans `main` (l'appli de conversation disparaîtrait alors de `main`).
 - [ ] Partie A.2 : où ranger les fichiers non commités du worktree du prof (rien n'a été touché).
 - [ ] `brew install stockfish`, puis `pytest -m stockfish`.
 - [ ] Ajouter une vraie photo `tests/photos/start.jpg`, puis `pytest -m groq` (coûte du quota).
@@ -353,3 +355,4 @@ ne vérifient jamais le texte d'un LLM, seulement des effets.
 | 2 | 23/10/2026 | Recos du TP, architecture adaptée au diagramme, garde-fous, fichier de suivi | Branche `feature/jarvis-echecs` en TDD, 185 tests, 100 %, création de `SUIVI.md` |
 | 3 | 23/10/2026 | Repo renommé ; code en anglais simple ; décider seul de la section 4 ; supprimer les fichiers inutiles | `origin` → `Jagvis.git` ; branches vérifiées ; code traduit (`jagvis_chess`) ; décisions 4, 5 et 7 changées + plafond des scores + roques (TDD) ; suppression de `__main__.py`, `.coveragerc`, des `__init__.py` vides des tests et de 2 copies en double ; 202 tests, 100 % |
 | 4 | 23/10/2026 | Les fichiers de l'appli (`db.py`, `jagvis_agent.py`…) sont-ils nécessaires ? Si non, les effacer ; architecture propre | Ils formaient l'appli de conversation : retirés de cette branche à ta demande (toujours sur `main`) ; `jagvis.db` supprimé par toi ; diagrammes rangés dans `docs/diagrams/` avec des noms anglais ; `streamlit` retiré des dépendances ; `.gitignore` réduit à l'utile ; README réécrit ; branche renommée `feature/jarvis-chess` ; 202 tests, 100 % |
+| 5 | 23/10/2026 | Pousser, mettre à jour le suivi, écrire un fichier qui explique le schéma de l'app | `docs/ARCHITECTURE.md` (cas d'utilisation, classes, flux, garde-fous, tests, avec schémas Mermaid) ; suivi à jour ; push de `feature/jarvis-chess` et mise à jour de `prof` |
