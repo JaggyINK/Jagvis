@@ -224,3 +224,6 @@ conv.json
 
 # Base de données locale
 jagvis.db
+
+# Parties sauvegardées par Jarvis Échecs
+parties/

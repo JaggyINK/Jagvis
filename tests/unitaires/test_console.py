@@ -96,3 +96,15 @@ def test_CON04_sans_cle_groq_code_2_et_message_clair(monkeypatch, mocker, capsys
     sorties = capsys.readouterr()
     assert sorties.err == "Erreur : la variable GROQ_KEY n'est pas définie.\n"
     assert "Traceback" not in sorties.out + sorties.err
+
+
+def test_CON04_avec_une_cle_jarvis_demarre_puis_quitte(monkeypatch, mocker, tmp_path):
+    mocker.patch("jagvis_echecs.console.load_dotenv")
+    monkeypatch.setenv("GROQ_KEY", "cle-de-test")  # construire le client Groq n'appelle pas le réseau
+    monkeypatch.setenv("JAGVIS_PARTIES", str(tmp_path / "parties"))
+    boucle_lancee = mocker.patch("jagvis_echecs.console.boucle")
+
+    assert main() == 0
+    jarvis, lunettes = boucle_lancee.call_args.args
+    assert lunettes is jarvis.lunettes
+    assert (tmp_path / "parties").is_dir()

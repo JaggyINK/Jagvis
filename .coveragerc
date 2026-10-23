@@ -1,0 +1,3 @@
+[run]
+# Lancé seulement en sous-processus par tests/fonctionnels/test_cli.py
+omit = jagvis_echecs/__main__.py
