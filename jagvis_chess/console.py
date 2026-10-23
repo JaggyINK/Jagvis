@@ -76,7 +76,10 @@ def build_jarvis():
         engine=ChessEngine(stockfish_path=os.environ.get("STOCKFISH_PATH", "stockfish")),
         assistant=LLMAssistant(),
         history=History(os.environ.get("JAGVIS_GAMES", "games")),
-        lichess_import=LichessImport(token=os.environ.get("LICHESS_TOKEN")),
+        lichess_import=LichessImport(
+            token=os.environ.get("LICHESS_TOKEN"),
+            username=os.environ.get("LICHESS_USERNAME"),
+        ),
     )
 
 

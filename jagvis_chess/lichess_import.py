@@ -45,9 +45,17 @@ def read_date(headers):
         return None
 
 
+def player_color(headers, username):
+    """Find our side with the Lichess username. White if we cannot tell."""
+    if username and headers.get("Black", "").lower() == username.lower():
+        return Color.BLACK
+    return Color.WHITE
+
+
 class LichessImport:
-    def __init__(self, token=None, download=download):
+    def __init__(self, token=None, username=None, download=download):
         self.token = token
+        self.username = username
         self.download = download
 
     def fetch_game(self, id):
@@ -78,7 +86,7 @@ class LichessImport:
         is_rated = "rated" in pgn_game.headers.get("Event", "").lower()
         return Game(
             mode=GameMode.OFFICIAL if is_rated else GameMode.FRIENDLY,
-            player_color=Color.WHITE,
+            player_color=player_color(pgn_game.headers, self.username),
             id=id,
             date=read_date(pgn_game.headers),
             moves=moves,
