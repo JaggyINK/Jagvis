@@ -152,3 +152,18 @@ def test_LIC06_network_problems(mocker, problem, expected_error, message):
 
     with pytest.raises(expected_error, match=message):
         download("https://lichess.org/game/export/AbCd1234", {})
+
+
+@pytest.mark.parametrize(
+    "username, color",
+    [
+        ("alice", Color.WHITE),
+        ("BOB", Color.BLACK),  # upper or lower case does not matter
+        ("carol", Color.WHITE),  # not in this game: white by default
+        (None, Color.WHITE),
+    ],
+)
+def test_LIC07_the_player_color_comes_from_the_username(username, color):
+    game = LichessImport(username=username, download=FakeDownload()).fetch_game("AbCd1234")
+
+    assert game.player_color == color
