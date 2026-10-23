@@ -4,7 +4,7 @@
 > fil et à faciliter la revue de code : ce qui est fait, pourquoi, où le vérifier,
 > et ce qui reste à faire.
 >
-> Dernière mise à jour : 23/10/2026, demande n°3. Branche : `feature/jarvis-echecs`.
+> Dernière mise à jour : 23/10/2026, demande n°4. Branche : `feature/jarvis-chess`.
 
 ---
 
@@ -20,9 +20,51 @@ de gaffe, analyse la partie terminée, l'importe depuis Lichess et l'exporte en 
 prend **aucune photo pour conseiller** et ne lance **aucune alerte** pendant la
 partie. Il fait seulement le suivi, puis l'analyse une fois la partie finie.
 
-Références : `docs/jarvis_echecs_classes.puml` (diagramme de classes validé par le
-prof), `docs/jarvis_echecs_cas_utilisation.puml` et les recommandations du TP
+Références : `docs/diagrams/class_diagram.puml` (diagramme de classes validé par le
+prof), `docs/diagrams/use_case_diagram.puml` et les recommandations du TP
 « Mini-JARVIS » (non commité : c'est l'énoncé du prof, le dépôt est public).
+
+---
+
+## 1 bis. Rangement des fichiers
+
+```
+Jagvis/
+├── README.md              présentation courte (anglais)
+├── SUIVI.md               ce fichier de suivi (français)
+├── requirements.txt       dépendances : groq, python-dotenv, python-chess
+├── requirements-dev.txt   + pytest, pytest-mock, pytest-cov
+├── pytest.ini             réglages des tests (marqueurs stockfish et groq exclus)
+├── .gitignore             .venv, .env, caches, games/
+├── docs/
+│   └── diagrams/
+│       ├── class_diagram.puml      diagramme de classes du prof
+│       └── use_case_diagram.puml   diagramme de cas d'utilisation du prof
+├── jagvis_chess/          le code : un fichier par classe ou groupe logique
+│   ├── model.py           Game, Position, Move, GameMode, Color
+│   ├── results.py         Evaluation, Analysis, BadMove, Severity
+│   ├── errors.py          toutes les erreurs prévues
+│   ├── history.py         History (JSON)
+│   ├── engine.py          ChessEngine (Stockfish)
+│   ├── lichess_import.py  LichessImport
+│   ├── groq_client.py     appel Groq protégé, partagé
+│   ├── assistant.py       LLMAssistant
+│   ├── board_reader.py    BoardReader (photo → FEN)
+│   ├── glasses.py         Glasses + ConsoleGlasses
+│   ├── jarvis.py          Jarvis
+│   └── console.py         la boucle de commandes du terminal
+└── tests/
+    ├── conftest.py        saute les tests stockfish/groq si l'outil ou la clé manque
+    ├── fakes.py           toutes les fausses versions écrites à la main
+    ├── unit/              un fichier de test par module
+    └── functional/        scénarios complets (acceptance) et E2E (cli)
+```
+
+**L'appli de conversation Streamlit** (`app.py`, `db.py`, `jagvis_agent.py`,
+`context.txt`) a été **retirée de cette branche** à ta demande (demande n°4). Elle
+reste **intacte sur `main`**. ⚠️ Si un jour on fusionne `feature/jarvis-chess`
+dans `main`, la fusion la supprimera aussi de `main`. Il faudra alors choisir :
+la garder dans un dossier `jagvis_chat/`, ou l'abandonner.
 
 ---
 
@@ -58,7 +100,7 @@ Variables d'environnement (fichier `.env`, jamais commité) :
 ## 3. Le code est en anglais : correspondance avec le diagramme
 
 Tu as demandé du code en anglais, avec des noms simples. Le diagramme du prof
-reste en français dans `docs/`. Voici la table pour passer de l'un à l'autre.
+reste en français dans `docs/diagrams/`. Voici la table pour passer de l'un à l'autre.
 
 | Diagramme (français) | Code (anglais) | Fichier |
 |---|---|---|
@@ -248,7 +290,7 @@ ne vérifient jamais le texte d'un LLM, seulement des effets.
 
 ## 9. Guide de revue de code (ordre de lecture)
 
-1. `docs/*.puml` puis la table du §3 : le contrat.
+1. `docs/diagrams/*.puml` puis la table du §3 : le contrat.
 2. `jagvis_chess/errors.py` : toutes les erreurs possibles.
 3. `model.py`, puis `results.py`, chacun avec son test dans `tests/unit/`.
 4. Les outils : `history.py`, `engine.py`, `lichess_import.py`, `groq_client.py`,
@@ -287,20 +329,19 @@ ne vérifient jamais le texte d'un LLM, seulement des effets.
   `15d207c` (`upstream/dev`) et `d8305c0` (`upstream/main`). La mise à jour se fait en
   avance rapide (aucun conflit).
 - `main` local a 1 commit de plus que `origin/main` (README « Jagvis »).
-- `feature/jarvis-echecs` n'est pas encore sur GitHub.
+- `feature/jarvis-chess` (renommée depuis `feature/jarvis-echecs`) n'est pas encore sur GitHub.
 - **Rien n'a été poussé.**
 
 ---
 
 ## 12. Reste à faire
 
-- [ ] Ta permission pour pousser : `main`, `feature/jarvis-echecs`, et la mise à jour de `prof`.
+- [ ] Ta permission pour pousser : `main`, `feature/jarvis-chess`, et la mise à jour de `prof`.
 - [ ] Partie A.2 : où ranger les fichiers non commités du worktree du prof (rien n'a été touché).
 - [ ] `brew install stockfish`, puis `pytest -m stockfish`.
 - [ ] Ajouter une vraie photo `tests/photos/start.jpg`, puis `pytest -m groq` (coûte du quota).
-- [ ] Brancher Jarvis Chess dans l'interface Streamlit de Jagvis (une `StreamlitGlasses`).
+- [ ] Une vraie interface pour les lunettes (une sous-classe de `Glasses`), quand on aura le SDK Meta.
 - [ ] Bonus du TP : GitHub Actions (`pytest --cov-fail-under=90`) et `REPONSES.md`.
-- [ ] Facultatif : traduire aussi en anglais l'appli Streamlit de `main` (`app.py`, `db.py`, `jagvis_agent.py`).
 
 ---
 
@@ -311,3 +352,4 @@ ne vérifient jamais le texte d'un LLM, seulement des effets.
 | 1 | 23/10/2026 | Partie A (réparer Git) + plan de la partie B | Worktree réparé, README « Jagvis » sur `main`, plan et 8 questions |
 | 2 | 23/10/2026 | Recos du TP, architecture adaptée au diagramme, garde-fous, fichier de suivi | Branche `feature/jarvis-echecs` en TDD, 185 tests, 100 %, création de `SUIVI.md` |
 | 3 | 23/10/2026 | Repo renommé ; code en anglais simple ; décider seul de la section 4 ; supprimer les fichiers inutiles | `origin` → `Jagvis.git` ; branches vérifiées ; code traduit (`jagvis_chess`) ; décisions 4, 5 et 7 changées + plafond des scores + roques (TDD) ; suppression de `__main__.py`, `.coveragerc`, des `__init__.py` vides des tests et de 2 copies en double ; 202 tests, 100 % |
+| 4 | 23/10/2026 | Les fichiers de l'appli (`db.py`, `jagvis_agent.py`…) sont-ils nécessaires ? Si non, les effacer ; architecture propre | Ils formaient l'appli de conversation : retirés de cette branche à ta demande (toujours sur `main`) ; `jagvis.db` supprimé par toi ; diagrammes rangés dans `docs/diagrams/` avec des noms anglais ; `streamlit` retiré des dépendances ; `.gitignore` réduit à l'utile ; README réécrit ; branche renommée `feature/jarvis-chess` ; 202 tests, 100 % |
