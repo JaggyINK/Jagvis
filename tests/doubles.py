@@ -95,3 +95,94 @@ class FausseLunettes:
     def afficher(self, texte):
         self.journal.append("afficher")
         self.affichages.append(texte)
+
+
+# --- Doubles des composants de Jarvis (tests unitaires de jarvis.py) ----------
+# Tous écrivent dans le même « journal » : on peut vérifier l'ordre des appels.
+
+
+class FausseReconnaissance:
+    def __init__(self, positions=(), journal=None, panne=None):
+        self.positions = list(positions)
+        self.photos_recues = []
+        self.panne = panne
+        self.journal = journal if journal is not None else []
+
+    def detecter_position(self, photo):
+        self.journal.append("detecter_position")
+        self.photos_recues.append(photo)
+        if self.panne:
+            raise self.panne
+        return self.positions.pop(0)
+
+
+class FauxMoteur:
+    """Rejoue des évaluations dans l'ordre ; ensuite, renvoie toujours la dernière."""
+
+    def __init__(self, evaluations=(), analyse=None, journal=None, panne=None):
+        self.evaluations = list(evaluations)
+        self.analyse = analyse
+        self.panne = panne
+        self.positions_evaluees = []
+        self.parties_analysees = []
+        self.journal = journal if journal is not None else []
+
+    def evaluer(self, position):
+        self.journal.append("evaluer")
+        self.positions_evaluees.append(position)
+        if self.panne:
+            raise self.panne
+        if len(self.evaluations) > 1:
+            return self.evaluations.pop(0)
+        return self.evaluations[0]
+
+    def analyser(self, partie):
+        self.journal.append("analyser")
+        self.parties_analysees.append(partie)
+        return self.analyse
+
+
+class FauxAssistant:
+    def __init__(self, texte="Explication du coach.", journal=None, panne=None):
+        self.texte = texte
+        self.panne = panne
+        self.demandes = []
+        self.journal = journal if journal is not None else []
+
+    def expliquer(self, position, evaluation):
+        self.journal.append("expliquer")
+        self.demandes.append((position, evaluation))
+        if self.panne:
+            raise self.panne
+        return self.texte
+
+
+class FauxHistorique:
+    def __init__(self, journal=None):
+        self.parties = {}
+        self.journal = journal if journal is not None else []
+
+    def sauvegarder(self, partie):
+        self.journal.append("sauvegarder")
+        self.parties[partie.id] = partie
+
+    def charger(self, id):
+        return self.parties[id]
+
+    def lister(self):
+        return list(self.parties.values())
+
+
+class FauxImportLichess:
+    def __init__(self, partie=None, journal=None, panne=None):
+        self.partie = partie
+        self.panne = panne
+        self.identifiants = []
+        self.journal = journal if journal is not None else []
+
+    def recuperer_partie(self, id):
+        self.journal.append("recuperer_partie")
+        self.identifiants.append(id)
+        if self.panne:
+            raise self.panne
+        return self.partie
