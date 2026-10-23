@@ -20,7 +20,7 @@ PHOTO_REELLE = Path(__file__).parent.parent / "photos" / "depart.jpg"
         (b"", "La photo est vide."),
         (None, "La photo est vide."),
         (b"GIF89a" + b"x", "Format de photo non pris en charge : JPEG ou PNG attendu."),
-        (PHOTO_PNG + b"x" * TAILLE_MAX_PHOTO, "La photo dépasse 4 Mo."),
+        (PHOTO_PNG + b"x" * TAILLE_MAX_PHOTO, "La photo dépasse 3 Mo."),
     ],
 )
 def test_REC01_photo_refusee_avant_tout_appel(photo, message):
@@ -96,3 +96,8 @@ def test_REC07_le_vrai_modele_reconnait_une_vraie_photo():
 
     # On vérifie l'effet (une position valide), pas le texte du modèle.
     assert isinstance(position, Position)
+
+
+def test_REC01_la_limite_vient_de_groq_qui_refuse_plus_de_4_mo_en_base64():
+    # base64 grossit les données d'un tiers : 3 Mo bruts deviennent 4 Mo.
+    assert TAILLE_MAX_PHOTO == 3 * 1024 * 1024
