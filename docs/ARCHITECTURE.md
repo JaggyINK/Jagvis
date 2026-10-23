@@ -414,7 +414,6 @@ Résultat : **201 tests**, **100 %** du code couvert.
 | 2 | Construction de Jarvis Échecs en TDD à partir du diagramme du prof, avec les recommandations du TP : tests d'acceptation d'abord, fausses versions écrites à la main, erreurs typées |
 | 3 | Code traduit en anglais simple ; choix définitifs : fair-play vérifié en premier, précision façon Lichess, scores plafonnés, camp trouvé avec le pseudo Lichess, roques devinés depuis la photo |
 | 4 | Dossier réservé au projet chess : appli de conversation retirée (elle reste sur `main`), diagrammes rangés dans `docs/diagrams/` |
-| 5 | Code simplifié et « humanisé » (moins de commentaires, tous en français), ce document, envoi sur GitHub |
 
 ---
 
