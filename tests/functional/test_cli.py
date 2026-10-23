@@ -9,7 +9,7 @@ def start_jarvis(tmp_path, groq_key, typed_text):
     env = {**os.environ, "GROQ_KEY": groq_key, "JAGVIS_GAMES": str(tmp_path / "games")}
     return subprocess.run(
         [sys.executable, "-m", "jagvis_chess.console"],
-        input=typed_text, capture_output=True, text=True, env=env, timeout=30,
+        input=typed_text, capture_output=True, text=True, env=env, timeout=30, check=False,
     )
 
 

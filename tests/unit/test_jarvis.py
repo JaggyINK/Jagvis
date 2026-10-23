@@ -3,7 +3,14 @@ from types import SimpleNamespace
 import chess
 import pytest
 
-from jagvis_chess.errors import BoardNotFound, GameNotFound, GameOver, NoGame, NotAllowed, ServiceDown
+from jagvis_chess.errors import (
+    BoardNotFound,
+    GameNotFound,
+    GameOver,
+    NoGame,
+    NotAllowed,
+    ServiceDown,
+)
 from jagvis_chess.jarvis import REFUSAL, Jarvis
 from jagvis_chess.model import Color, Game, GameMode, Move, Position
 from jagvis_chess.results import Analysis, Evaluation

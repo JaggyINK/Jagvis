@@ -1,4 +1,11 @@
-from jagvis_chess.errors import BoardNotFound, GameOver, InvalidFen, NoGame, NotAllowed, ServiceDown
+from jagvis_chess.errors import (
+    BoardNotFound,
+    GameOver,
+    InvalidFen,
+    NoGame,
+    NotAllowed,
+    ServiceDown,
+)
 from jagvis_chess.model import Color, Game, GameMode, Move, Position, color_from_turn
 from jagvis_chess.results import Severity, move_loss, severity_of
 

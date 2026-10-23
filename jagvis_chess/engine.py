@@ -3,7 +3,14 @@ import chess.engine
 
 from jagvis_chess.errors import ConfigError, GameOver, ServiceDown
 from jagvis_chess.model import Color, Move, color_from_turn
-from jagvis_chess.results import Analysis, BadMove, Evaluation, move_accuracy, move_loss, severity_of
+from jagvis_chess.results import (
+    Analysis,
+    BadMove,
+    Evaluation,
+    move_accuracy,
+    move_loss,
+    severity_of,
+)
 
 MATE_SCORE = 10_000
 STOCKFISH_ERRORS = (OSError, chess.engine.EngineError)
