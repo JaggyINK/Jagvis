@@ -57,7 +57,7 @@ def test_E1_advice_in_training_mode(tmp_path):
 
 def test_E2_no_advice_in_official_mode(tmp_path):
     glasses = FakeGlasses(photos=[PNG_PHOTO])
-    vision = FakeGroqClient([f"{START} w KQkq - 0 1"])
+    vision = FakeGroqClient([])
     text = FakeGroqClient([])
     uci = FakeUciEngine()
     jarvis = build_jarvis(tmp_path, glasses, vision, text, uci)
@@ -67,8 +67,9 @@ def test_E2_no_advice_in_official_mode(tmp_path):
 
     assert advice == REFUSAL
     assert glasses.spoken[-1] == REFUSAL
+    assert glasses.photos == [PNG_PHOTO]  # the photo was never taken
+    assert vision.calls == [] and text.calls == []
     assert uci.analysed_positions == []
-    assert text.calls == []
 
 
 def test_E3_followed_game_blunder_warning_then_analysis(tmp_path):

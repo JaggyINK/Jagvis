@@ -105,13 +105,13 @@ def test_JAR02_start_a_game(tools):
 # --- JAR-03 to JAR-07: suggest_move -------------------------------------------------
 
 
-def test_JAR03_advice_follows_the_diagram_order(tools):
+def test_JAR03_advice_checks_the_fair_play_rule_first(tools):
     jarvis = jarvis_with_game(tools)
 
     advice = jarvis.suggest_move()
 
     assert tools.log == [
-        "take_photo", "read_position", "can_advise", "evaluate", "explain", "speak",
+        "can_advise", "take_photo", "read_position", "evaluate", "explain", "speak",
     ]
     assert advice == "Best move: e4. Coach explanation."
     assert tools.glasses.spoken == [advice]
@@ -119,13 +119,13 @@ def test_JAR03_advice_follows_the_diagram_order(tools):
     assert tools.assistant.questions == [(Position(START), E4_ADVICE)]
 
 
-def test_JAR04_official_mode_refuses_without_engine_or_llm(tools):
+def test_JAR04_official_mode_refuses_without_photo_engine_or_llm(tools):
     jarvis = jarvis_with_game(tools, mode=GameMode.OFFICIAL)
 
     advice = jarvis.suggest_move()
 
     assert advice == REFUSAL
-    assert tools.log == ["take_photo", "read_position", "can_advise", "speak"]
+    assert tools.log == ["can_advise", "speak"]  # no photo is taken or sent
     assert tools.glasses.spoken == [REFUSAL]
 
 
