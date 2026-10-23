@@ -12,6 +12,7 @@ jagvis_chess/    the code
 tests/unit/      one test file per module
 tests/functional/  full stories and end-to-end tests
 SUIVI.md         follow-up notes for the code review (in French)
+docs/COMMANDES.md  every command to type: tests, coverage, console (in French)
 ```
 
 ## Start

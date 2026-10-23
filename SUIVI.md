@@ -4,7 +4,7 @@
 > fil et à faciliter la revue de code : ce qui est fait, pourquoi, où le vérifier,
 > et ce qui reste à faire.
 >
-> Dernière mise à jour : 23/10/2026, demande n°6. Branche : `feature/jarvis-chess`.
+> Dernière mise à jour : 23/10/2026, demande n°7. Branche : `feature/jarvis-chess`.
 
 ---
 
@@ -38,6 +38,7 @@ Jagvis/
 ├── .gitignore             .venv, .env, caches, games/
 ├── docs/
 │   ├── ARCHITECTURE.md      explication de l'app avec schémas (à lire en premier)
+│   ├── COMMANDES.md         toutes les commandes à taper (tests, console, Stockfish)
 │   └── diagrams/
 │       ├── class_diagram.puml      diagramme de classes du prof
 │       └── use_case_diagram.puml   diagramme de cas d'utilisation du prof
@@ -341,12 +342,23 @@ ne vérifient jamais le texte d'un LLM, seulement des effets.
 
 ## 12. Reste à faire
 
-- [ ] Décider si on fusionne `feature/jarvis-chess` dans `main` (l'appli de conversation disparaîtrait alors de `main`).
-- [ ] Partie A.2 : où ranger les fichiers non commités du worktree du prof (rien n'a été touché).
-- [ ] `brew install stockfish`, puis `pytest -m stockfish`.
-- [ ] Ajouter une vraie photo `tests/photos/start.jpg`, puis `pytest -m groq` (coûte du quota).
-- [ ] Une vraie interface pour les lunettes (une sous-classe de `Glasses`), quand on aura le SDK Meta.
-- [ ] Bonus du TP : GitHub Actions (`pytest --cov-fail-under=90`) et `REPONSES.md`.
+Toutes les commandes sont dans [`docs/COMMANDES.md`](docs/COMMANDES.md).
+
+**Sans les lunettes, tout de suite :**
+- [ ] Installer Stockfish (Homebrew n'est pas installé : voir COMMANDES.md §6), puis `pytest -m stockfish`.
+- [ ] Essayer la console avec des captures d'écran de lichess.org/editor (COMMANDES.md §7).
+- [ ] Ajouter une vraie photo `tests/photos/start.jpg`, puis `pytest -m groq` (BRD-07 vérifie le modèle de vision, coûte un peu de quota).
+- [ ] Bonus du TP : GitHub Actions qui lance `pytest --cov-fail-under=90` à chaque push.
+
+**Décisions à prendre :**
+- [ ] Fusionner `feature/jarvis-chess` dans `main` (l'appli de conversation disparaîtrait alors de `main`), ou ouvrir une Pull Request pour la revue.
+- [ ] Partie A.2 : que faire des fichiers non commités du worktree du prof (rien n'a été touché).
+- [ ] Supprimer la sauvegarde locale `refs/original/` (anciens messages de commit, jamais poussée).
+
+**Plus tard, avec les lunettes :**
+- [ ] Écrire une sous-classe de `Glasses` avec le SDK Meta (photo, micro, voix, affichage). Rien d'autre ne change.
+
+**Déjà vérifié :** la clé Groq et le modèle texte fonctionnent. LLM-05 a été lancé pour de vrai pendant la demande n°7 et a réussi.
 
 ---
 
@@ -360,3 +372,4 @@ ne vérifient jamais le texte d'un LLM, seulement des effets.
 | 4 | 23/10/2026 | Les fichiers de l'appli (`db.py`, `jagvis_agent.py`…) sont-ils nécessaires ? Si non, les effacer ; architecture propre | Ils formaient l'appli de conversation : retirés de cette branche à ta demande (toujours sur `main`) ; `jagvis.db` supprimé par toi ; diagrammes rangés dans `docs/diagrams/` avec des noms anglais ; `streamlit` retiré des dépendances ; `.gitignore` réduit à l'utile ; README réécrit ; branche renommée `feature/jarvis-chess` ; 202 tests, 100 % |
 | 5 | 23/10/2026 | Pousser ; mettre à jour le suivi ; expliquer le schéma de l'app ; humaniser et simplifier le code ; commentaires en français | `docs/ARCHITECTURE.md` (cas d'utilisation, classes, flux, garde-fous, tests, schémas Mermaid) ; code simplifié (docstrings inutiles, `__repr__`, `__init__.py` du paquet retirés), commentaires courts et en français ; 201 tests, 100 % ; push de `feature/jarvis-chess` et mise à jour de `prof` |
 | 6 | 23/10/2026 | Retirer l'étape 5 d'ARCHITECTURE.md ; aucune mention de Claude dans le dépôt ni dans les commits poussés | Ligne retirée ; messages des 48 commits réécrits sans la ligne `Co-Authored-By` (contenu des fichiers identique) ; `feature/jarvis-chess` remplacée sur GitHub avec `--force-with-lease` |
+| 7 | 23/10/2026 | Ce qui reste à faire ; un fichier avec toutes les commandes pour les tests (pas encore de lunettes) | `docs/COMMANDES.md` (installation, tests par niveau/fichier/exigence, couverture, vrais services, Stockfish, console sans lunettes, git) ; « Reste à faire » réécrit |
