@@ -134,30 +134,29 @@ BRD-07 (le modèle de vision sur une vraie photo) a aussi besoin d'une photo :
 
 ---
 
-## 6. Installer Stockfish (nécessaire pour jouer pour de vrai)
+## 6. Stockfish
 
-Sans Stockfish, les commandes `advice`, `explain`, `play` et `analyze` de la
-console répondent `Error: Stockfish is missing or not answering`.
-
-Homebrew n'est pas installé sur ce Mac. Deux possibilités :
-
-**A. Installer Homebrew, puis Stockfish** (le plus simple ensuite) :
+**Déjà installé** (le 23/10/2026) : Stockfish 19, dans `~/.local/bin/stockfish`. Ce
+dossier est dans ton PATH, donc rien à régler dans `.env`.
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-brew install stockfish
-which stockfish        # doit afficher un chemin
+which stockfish                                   # /Users/anna/.local/bin/stockfish
+printf 'uci\nquit\n' | stockfish | grep "id name"  # Stockfish 19
+.venv/bin/pytest -m stockfish -rs                 # 1 passed
 ```
 
-**B. Sans Homebrew** : télécharge la version macOS (Apple Silicon) sur
-https://stockfishchess.org/download/ et décompresse-la. Puis indique son chemin
-dans `.env` :
+Réinstaller ou mettre à jour (version officielle sur GitHub, sans Homebrew ni
+mot de passe administrateur) :
 
 ```bash
-echo 'STOCKFISH_PATH=/chemin/vers/stockfish' >> .env
+cd /tmp
+curl -LO https://github.com/official-stockfish/Stockfish/releases/latest/download/stockfish-macos-universal.tar.gz
+shasum -a 256 stockfish-macos-universal.tar.gz   # à comparer avec l'empreinte affichée sur la page de la version
+tar -xzf stockfish-macos-universal.tar.gz stockfish/stockfish-macos-universal
+install -m 755 stockfish/stockfish-macos-universal ~/.local/bin/stockfish
 ```
 
-Vérifier : `.venv/bin/pytest -m stockfish -rs` doit afficher `1 passed`.
+Pour utiliser un autre Stockfish : `echo 'STOCKFISH_PATH=/chemin/vers/stockfish' >> .env`.
 
 ---
 

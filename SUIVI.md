@@ -4,7 +4,7 @@
 > fil et à faciliter la revue de code : ce qui est fait, pourquoi, où le vérifier,
 > et ce qui reste à faire.
 >
-> Dernière mise à jour : 23/10/2026, demande n°7. Branche : `feature/jarvis-chess`.
+> Dernière mise à jour : 23/10/2026, demande n°8. Branche : `feature/jarvis-chess`.
 
 ---
 
@@ -320,8 +320,8 @@ ne vérifient jamais le texte d'un LLM, seulement des effets.
 - Couverture : **100 %** de `jagvis_chess`. Seules les 2 lignes
   `if __name__ == "__main__"` de `console.py` sont exclues ; elles sont testées en
   sous-processus par E4 et E5.
-- Tests marqués : ENG-07 est sauté (Stockfish non installé). LLM-05 et BRD-07 n'ont
-  pas été lancés, pour ne pas consommer de quota Groq sans ton accord.
+- Tests marqués : ENG-07 **réussit avec le vrai Stockfish 19**. LLM-05 **réussit avec le
+  vrai Groq** (lancé à la demande n°7). BRD-07 attend une vraie photo `tests/photos/start.jpg`.
 
 ---
 
@@ -345,7 +345,7 @@ ne vérifient jamais le texte d'un LLM, seulement des effets.
 Toutes les commandes sont dans [`docs/COMMANDES.md`](docs/COMMANDES.md).
 
 **Sans les lunettes, tout de suite :**
-- [ ] Installer Stockfish (Homebrew n'est pas installé : voir COMMANDES.md §6), puis `pytest -m stockfish`.
+- [x] Installer Stockfish : **Stockfish 19** dans `~/.local/bin/stockfish` (version officielle GitHub, empreinte SHA-256 vérifiée) ; `pytest -m stockfish` réussit.
 - [ ] Essayer la console avec des captures d'écran de lichess.org/editor (COMMANDES.md §7).
 - [ ] Ajouter une vraie photo `tests/photos/start.jpg`, puis `pytest -m groq` (BRD-07 vérifie le modèle de vision, coûte un peu de quota).
 - [ ] Bonus du TP : GitHub Actions qui lance `pytest --cov-fail-under=90` à chaque push.
@@ -358,7 +358,7 @@ Toutes les commandes sont dans [`docs/COMMANDES.md`](docs/COMMANDES.md).
 **Plus tard, avec les lunettes :**
 - [ ] Écrire une sous-classe de `Glasses` avec le SDK Meta (photo, micro, voix, affichage). Rien d'autre ne change.
 
-**Déjà vérifié :** la clé Groq et le modèle texte fonctionnent. LLM-05 a été lancé pour de vrai pendant la demande n°7 et a réussi.
+**Déjà vérifié :** la clé Groq et le modèle texte fonctionnent. Avec le vrai Stockfish, l'analyse du « mat du lion » trouve `g4` = gaffe et `f3` = imprécision (précision 40 %), et `play` fait jouer Jarvis dans la console. LLM-05 a été lancé pour de vrai pendant la demande n°7 et a réussi.
 
 ---
 
@@ -373,3 +373,4 @@ Toutes les commandes sont dans [`docs/COMMANDES.md`](docs/COMMANDES.md).
 | 5 | 23/10/2026 | Pousser ; mettre à jour le suivi ; expliquer le schéma de l'app ; humaniser et simplifier le code ; commentaires en français | `docs/ARCHITECTURE.md` (cas d'utilisation, classes, flux, garde-fous, tests, schémas Mermaid) ; code simplifié (docstrings inutiles, `__repr__`, `__init__.py` du paquet retirés), commentaires courts et en français ; 201 tests, 100 % ; push de `feature/jarvis-chess` et mise à jour de `prof` |
 | 6 | 23/10/2026 | Retirer l'étape 5 d'ARCHITECTURE.md ; aucune mention de Claude dans le dépôt ni dans les commits poussés | Ligne retirée ; messages des 48 commits réécrits sans la ligne `Co-Authored-By` (contenu des fichiers identique) ; `feature/jarvis-chess` remplacée sur GitHub avec `--force-with-lease` |
 | 7 | 23/10/2026 | Ce qui reste à faire ; un fichier avec toutes les commandes pour les tests (pas encore de lunettes) | `docs/COMMANDES.md` (installation, tests par niveau/fichier/exigence, couverture, vrais services, Stockfish, console sans lunettes, git) ; « Reste à faire » réécrit |
+| 8 | 23/10/2026 | Installer Stockfish tout de suite | Stockfish 19 (binaire officiel macOS universel, SHA-256 vérifiée) installé dans `~/.local/bin` sans Homebrew ; ENG-07 vert ; essais réels console + analyse ; COMMANDES.md §6 réécrit |
