@@ -11,8 +11,8 @@ from jagvis_echecs.erreurs import FenInvalide, PhotoInvalide, ReconnaissanceImpo
 from jagvis_echecs.modele import Position
 
 MODELE_VISION = "meta-llama/llama-4-scout-17b-16e-instruct"
-# Groq refuse les images de plus de 4 Mo envoyées en base64.
-TAILLE_MAX_PHOTO = 4 * 1024 * 1024
+# Groq refuse plus de 4 Mo en base64, soit environ 3 Mo de photo brute.
+TAILLE_MAX_PHOTO = 3 * 1024 * 1024
 
 CONSIGNE = (
     "Voici la photo d'un échiquier. Réponds uniquement par la FEN complète de la "
@@ -41,7 +41,7 @@ def verifier_photo(photo):
     if type_mime(photo) is None:
         raise PhotoInvalide("Format de photo non pris en charge : JPEG ou PNG attendu.")
     if len(photo) > TAILLE_MAX_PHOTO:
-        raise PhotoInvalide("La photo dépasse 4 Mo.")
+        raise PhotoInvalide("La photo dépasse 3 Mo.")
 
 
 def extraire_fen(texte):
