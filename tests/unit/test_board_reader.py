@@ -82,6 +82,7 @@ def test_BRD04_pieces_only_keep_the_castling_still_possible(pieces, castling):
         ("I do not see a chessboard.", "I could not see a chessboard on the photo."),
         ("8/8/8/8/8/8/8/8 w - - 0 1", "The position on the photo is not valid"),
         ("rnbqkbnr/pppppppp/9/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1", "could not see|not valid"),
+        ("rnbqkbnr/pppppppp/7/8/8/8/PPPPPPPP/RNBQKBNR", "not valid"),  # a row of 7 squares
     ],
 )
 def test_BRD05_answer_without_a_valid_position(answer, message):

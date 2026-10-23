@@ -6,6 +6,8 @@ The Groq client can be swapped: in the tests, a fake client answers.
 import base64
 import re
 
+import chess
+
 from jagvis_chess.errors import BoardNotFound, InvalidFen, InvalidPhoto
 from jagvis_chess.groq_client import ask_groq, make_groq_client
 from jagvis_chess.model import Position
@@ -49,8 +51,23 @@ def find_fen(text):
     if found is None:
         raise BoardNotFound("I could not see a chessboard on the photo.")
     pieces, rest = found.group(1), found.group(2)
-    # Without the rest of the FEN, we guess: white to play, no castling.
-    return pieces + (rest if rest else " w - - 0 1")
+    if rest:
+        return pieces + rest
+    return guess_full_fen(pieces)
+
+
+def guess_full_fen(pieces):
+    """The model gave only the pieces: we guess the rest of the FEN.
+
+    White to play. Castling is kept only if the king and the rook are still
+    on their first squares (python-chess removes the impossible ones).
+    """
+    try:
+        board = chess.Board(f"{pieces} w KQkq - 0 1")
+    except ValueError:
+        return f"{pieces} w - - 0 1"  # Position() will refuse it with a clear error
+    board.castling_rights = board.clean_castling_rights()
+    return board.fen()
 
 
 class BoardReader:
