@@ -60,12 +60,20 @@ def test_BRD03_the_fen_is_found_in_the_model_text():
     assert position.turn == Color.BLACK
 
 
-def test_BRD04_pieces_only_are_completed_with_default_values():
-    client = FakeGroqClient(["rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR"])
+@pytest.mark.parametrize(
+    "pieces, castling",
+    [
+        ("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR", "KQkq"),  # kings and rooks at home
+        ("rnbq1bnr/ppppkppp/8/4p3/4P3/8/PPPPKPPP/RNBQ1BNR", "-"),  # both kings moved
+        ("1nbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBN1", "Qk"),  # two rooks are gone
+    ],
+)
+def test_BRD04_pieces_only_keep_the_castling_still_possible(pieces, castling):
+    client = FakeGroqClient([pieces])
 
     position = BoardReader(client=client).read_position(PNG_PHOTO)
 
-    assert position.fen == "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR w - - 0 1"
+    assert position.fen == f"{pieces} w {castling} - 0 1"
 
 
 @pytest.mark.parametrize(
