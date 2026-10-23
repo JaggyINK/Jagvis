@@ -1,8 +1,12 @@
+import io
+from datetime import datetime
+
 import chess
+import chess.pgn
 import pytest
 
-from jagvis_echecs.erreurs import FenInvalide
-from jagvis_echecs.modele import Coup, Couleur, ModeJeu, Position
+from jagvis_echecs.erreurs import CoupIllegal, FenInvalide, PartieTerminee
+from jagvis_echecs.modele import Coup, Couleur, ModeJeu, Partie, Position
 
 DEPART = chess.STARTING_FEN
 MAT_DU_BERGER = "r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 4"
@@ -69,13 +73,6 @@ def test_MOD04_aucun_coup_legal_quand_on_est_mat():
 
 
 # --- Partie -----------------------------------------------------------------
-import io
-from datetime import datetime
-
-import chess.pgn
-
-from jagvis_echecs.erreurs import CoupIllegal, PartieTerminee
-from jagvis_echecs.modele import Partie
 
 DATE = datetime(2026, 10, 23, 14, 5)
 MAT_DU_LION = ["f3", "e5", "g4", "Qh4#"]
