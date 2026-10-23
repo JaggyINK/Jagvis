@@ -2,8 +2,7 @@
 
 Le client Groq est injecté : en test, un faux client rejoue des réponses.
 """
-from jagvis_echecs.client_groq import creer_client_groq
-from jagvis_echecs.erreurs import ServiceIndisponible
+from jagvis_echecs.client_groq import creer_client_groq, demander_a_groq
 
 MODELE_TEXTE = "openai/gpt-oss-120b"
 
@@ -32,13 +31,4 @@ class AssistantLLM:
             {"role": "system", "content": CONSIGNE},
             {"role": "user", "content": question},
         ]
-        try:
-            reponse = self.client.chat.completions.create(
-                model=self.modele, messages=messages, temperature=0
-            )
-        except Exception as erreur:  # réseau, quota, clé refusée... : tout se vaut ici
-            raise ServiceIndisponible("Le service de langage est indisponible.") from erreur
-        texte = reponse.choices[0].message.content
-        if not texte or not texte.strip():
-            raise ServiceIndisponible("Le service de langage n'a rien répondu.")
-        return texte.strip()
+        return demander_a_groq(self.client, self.modele, messages)

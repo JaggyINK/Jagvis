@@ -6,8 +6,8 @@ réponse. Le client Groq est injecté : en test, un faux client répond.
 import base64
 import re
 
-from jagvis_echecs.client_groq import creer_client_groq
-from jagvis_echecs.erreurs import FenInvalide, PhotoInvalide, ReconnaissanceImpossible, ServiceIndisponible
+from jagvis_echecs.client_groq import creer_client_groq, demander_a_groq
+from jagvis_echecs.erreurs import FenInvalide, PhotoInvalide, ReconnaissanceImpossible
 from jagvis_echecs.modele import Position
 
 MODELE_VISION = "meta-llama/llama-4-scout-17b-16e-instruct"
@@ -68,17 +68,7 @@ class ReconnaissancePlateau:
                 {"type": "image_url", "image_url": {"url": image}},
             ],
         }]
-        try:
-            reponse = self.client.chat.completions.create(
-                model=self.modele, messages=messages, temperature=0
-            )
-        except Exception as erreur:
-            raise ServiceIndisponible("Le service de langage est indisponible.") from erreur
-        texte = reponse.choices[0].message.content
-        if not texte or not texte.strip():
-            raise ServiceIndisponible("Le service de langage n'a rien répondu.")
-
-        fen = extraire_fen(texte)
+        fen = extraire_fen(demander_a_groq(self.client, self.modele, messages))
         try:
             return Position(fen)
         except FenInvalide as erreur:
