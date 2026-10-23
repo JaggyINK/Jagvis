@@ -126,8 +126,8 @@ def test_ENG06_analyze_finds_the_player_blunder():
     analysis = ChessEngine(open_engine=uci.open).analyze(game_with(FOOLS_MATE))
 
     assert [(bad.move.notation, bad.severity) for bad in analysis.bad_moves] == [("g4", Severity.BLUNDER)]
-    assert analysis.bad_moves[0].loss > 300
-    assert analysis.accuracy == 50.0
+    assert analysis.bad_moves[0].loss == 1000  # capped score
+    assert 50 < analysis.accuracy < 60  # one perfect move, one very bad move
     assert uci.opened_paths == ["stockfish"]  # Stockfish starts only once for the game
     assert len(uci.analysed_positions) == 4  # the final mate position is not sent
     assert uci.closed
@@ -139,7 +139,7 @@ def test_ENG06_only_the_player_moves_are_checked():
     analysis = ChessEngine(open_engine=uci.open).analyze(game_with(FOOLS_MATE, Color.BLACK))
 
     assert analysis.bad_moves == []
-    assert analysis.accuracy == 100.0
+    assert analysis.accuracy == pytest.approx(100, abs=0.01)
 
 
 def test_ENG06_game_without_moves():
@@ -152,6 +152,14 @@ def test_ENG06_game_without_moves():
 
 def test_ENG06_a_small_loss_is_not_a_bad_move():
     uci = FakeUciEngine(scores={START: 30, AFTER_E4: 0})
+
+    analysis = ChessEngine(open_engine=uci.open).analyze(game_with(["e4"]))
+
+    assert analysis.bad_moves == []
+
+
+def test_ENG06_losing_a_little_when_winning_big_is_not_a_bad_move():
+    uci = FakeUciEngine(scores={START: 2000, AFTER_E4: 1500})
 
     analysis = ChessEngine(open_engine=uci.open).analyze(game_with(["e4"]))
 

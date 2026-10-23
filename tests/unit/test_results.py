@@ -1,7 +1,16 @@
 import pytest
 
 from jagvis_chess.model import Color, Move
-from jagvis_chess.results import Analysis, BadMove, Evaluation, Severity, severity_of
+from jagvis_chess.results import (
+    Analysis,
+    BadMove,
+    Evaluation,
+    Severity,
+    move_accuracy,
+    move_loss,
+    severity_of,
+    win_chance,
+)
 
 E4 = Move("e4", Color.WHITE)
 
@@ -63,3 +72,34 @@ def test_RES04_summary_counts_bad_moves_by_severity():
 
 def test_RES04_summary_without_bad_moves():
     assert Analysis(accuracy=100.0, bad_moves=[]).summary() == "Accuracy: 100 %. No bad moves, well done!"
+
+
+@pytest.mark.parametrize(
+    "before, after, loss",
+    [
+        (100, -100, 200),
+        (0, -10000, 1000),  # scores are capped at 1000: a mate counts like +1000
+        (2000, 1500, 0),  # still winning big: this is not a bad move
+        (-50, 20, 0),  # the position got better: no loss
+    ],
+)
+def test_RES05_loss_of_a_move_with_capped_scores(before, after, loss):
+    assert move_loss(before, after) == loss
+
+
+def test_RES06_win_chance_in_percent():
+    assert win_chance(0) == 50
+    assert win_chance(1000) > 97
+    assert win_chance(-300) == pytest.approx(100 - win_chance(300))
+
+
+@pytest.mark.parametrize(
+    "before, after, low, high",
+    [
+        (0, 0, 99.9, 100),  # nothing lost: perfect move
+        (30, 0, 80, 99.9),  # a tiny loss: still good
+        (0, -10000, 0, 15),  # gives a mate: very bad
+    ],
+)
+def test_RES07_accuracy_of_one_move(before, after, low, high):
+    assert low <= move_accuracy(before, after) <= high

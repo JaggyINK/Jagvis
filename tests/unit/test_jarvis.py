@@ -252,6 +252,17 @@ def test_JAR09_no_warning_for_a_simple_mistake(tools):
     assert tools.glasses.spoken == []
 
 
+def test_JAR09_no_warning_when_still_winning_big(tools):
+    tools.board_reader.positions = [position_after("e4")]
+    # From +2000 to +1500 for the player: capped, both count as +1000.
+    tools.engine.evaluations = evaluations(before=2000, after_for_opponent=-1500)
+    jarvis = jarvis_with_game(tools)
+
+    jarvis.follow_game()
+
+    assert tools.glasses.spoken == []
+
+
 def test_JAR09_no_warning_for_the_opponent_move(tools):
     tools.board_reader.positions = [position_after("e4")]
     jarvis = jarvis_with_game(tools, color=Color.BLACK)
