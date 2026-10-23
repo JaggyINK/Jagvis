@@ -3,12 +3,15 @@
 python-chess fait tout le travail de règles du jeu. Nos classes l'enveloppent
 pour parler le vocabulaire du diagramme (en français).
 """
+import uuid
 from dataclasses import dataclass
+from datetime import datetime
 from enum import Enum
 
 import chess
+import chess.pgn
 
-from jagvis_echecs.erreurs import FenInvalide
+from jagvis_echecs.erreurs import CoupIllegal, FenInvalide, PartieTerminee
 
 
 class Couleur(Enum):
@@ -62,3 +65,60 @@ class Position:
 
     def __repr__(self):
         return f"Position({self.fen!r})"
+
+
+class Partie:
+    """Une partie, rejouée à partir de la position de départ et de ses coups."""
+
+    def __init__(self, mode, couleur_joueur, id=None, date=None, coups=()):
+        if not isinstance(mode, ModeJeu):
+            raise TypeError(f"mode doit être un ModeJeu, pas {mode!r}")
+        if not isinstance(couleur_joueur, Couleur):
+            raise TypeError(f"couleur_joueur doit être une Couleur, pas {couleur_joueur!r}")
+        self.id = id or uuid.uuid4().hex[:12]
+        self.date = date or datetime.now()
+        self.mode = mode
+        self.couleur_joueur = couleur_joueur
+        self.coups = []
+        # On rejoue les coups reçus un par un : un coup faux lève CoupIllegal.
+        for coup in coups:
+            self.jouer(coup)
+
+    def _plateau(self):
+        plateau = chess.Board()
+        for coup in self.coups:
+            plateau.push_san(coup.notation)
+        return plateau
+
+    def jouer(self, coup):
+        plateau = self._plateau()
+        if plateau.is_game_over():
+            raise PartieTerminee("La partie est terminée.")
+        if coup.couleur != couleur_de(plateau.turn):
+            raise CoupIllegal(f"Ce n'est pas aux {coup.couleur.value}s de jouer.")
+        try:
+            mouvement = plateau.parse_san(coup.notation)
+        except ValueError as erreur:
+            raise CoupIllegal(f"Coup illégal : {coup.notation}") from erreur
+        # On garde la notation officielle (« Qh4# » même si on a reçu « Qh4 »).
+        self.coups.append(Coup(plateau.san(mouvement), coup.couleur))
+
+    def position_actuelle(self):
+        return Position(self._plateau().fen())
+
+    def peut_conseiller(self):
+        """Règle fair-play : aucune aide pendant une partie officielle."""
+        return self.mode != ModeJeu.OFFICIEL
+
+    def est_terminee(self):
+        return self._plateau().is_game_over()
+
+    def vers_pgn(self):
+        jeu = chess.pgn.Game.from_board(self._plateau())
+        jeu.headers["Event"] = f"Jarvis Échecs ({self.mode.value})"
+        jeu.headers["Date"] = self.date.strftime("%Y.%m.%d")
+        if self.couleur_joueur == Couleur.BLANC:
+            jeu.headers["White"], jeu.headers["Black"] = "Joueur", "Adversaire"
+        else:
+            jeu.headers["White"], jeu.headers["Black"] = "Adversaire", "Joueur"
+        return str(jeu)
