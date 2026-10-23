@@ -1,0 +1,65 @@
+@startuml jarvis_echecs_cas_utilisation
+title Jarvis Échecs — cas d'utilisation (lunettes Meta)
+left to right direction
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor<<interne>> #EEF3EF
+}
+
+actor "Joueur\n(porte les lunettes)" as Joueur
+actor "Moteur d'échecs\n(Stockfish)" as Stockfish
+actor "LLM\n(Groq)" as LLM
+actor "Plateforme\n(Lichess)" as Plateforme
+
+rectangle "Jarvis Échecs · lunettes Meta" {
+  ' Cas utilisés directement par le joueur
+  usecase "Démarrer une session de jeu" as A1
+  usecase "Suivre la partie en direct" as A2
+  usecase "Demander le meilleur coup" as A3
+  usecase "Être alerté d'une gaffe" as A4
+  usecase "Jouer contre Jarvis" as A5
+  usecase "Analyser la partie terminée" as A6
+  usecase "Exporter la partie (PGN)" as A7
+
+  ' Cas internes (inclus ou en extension)
+  usecase "Choisir le mode\n(entraînement, amical, officiel)" as B1 <<interne>>
+  usecase "Reconnaître l'échiquier\n(caméra → position FEN)" as B2 <<interne>>
+  usecase "Évaluer la position\n(moteur d'échecs)" as B3 <<interne>>
+  usecase "Vérifier le mode fair-play" as B4 <<interne>>
+  usecase "Annoncer à voix haute\n(synthèse vocale)" as B5 <<interne>>
+  usecase "Expliquer le coup\nen langage naturel" as B6 <<interne>>
+  usecase "Importer une partie en ligne" as B7 <<interne>>
+}
+
+Joueur --> A1
+Joueur --> A2
+Joueur --> A3
+Joueur --> A4
+Joueur --> A5
+Joueur --> A6
+Joueur --> A7
+
+A1 ..> B1 : <<include>>
+A2 ..> B2 : <<include>>
+A3 ..> B3 : <<include>>
+A3 ..> B4 : <<include>>
+A3 ..> B5 : <<include>>
+A4 ..> B3 : <<include>>
+A4 ..> B5 : <<include>>
+A5 ..> B3 : <<include>>
+A6 ..> B3 : <<include>>
+B6 ..> A3 : <<extend>>
+B6 ..> A6 : <<extend>>
+B7 ..> A6 : <<extend>>
+
+B3 -- Stockfish
+B6 -- LLM
+B7 -- Plateforme
+
+note right of B4
+  Mode « officiel » (tournoi, partie classée) :
+  aucune suggestion de coup ni alerte pendant
+  la partie, seulement le suivi et l'analyse après.
+  Utiliser un moteur en partie officielle est de la triche.
+end note
+@enduml

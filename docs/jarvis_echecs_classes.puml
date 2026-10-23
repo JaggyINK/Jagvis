@@ -1,0 +1,151 @@
+@startuml jarvis_echecs_classes
+title Jarvis Échecs - diagramme de classes
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam shadowing false
+skinparam packageStyle rectangle
+hide empty members
+
+class Jarvis #FFE0B2 {
+  - lunettes : Lunettes
+  - reconnaissance : ReconnaissancePlateau
+  - moteur : MoteurEchecs
+  - assistant : AssistantLLM
+  - historique : Historique
+  - import_lichess : ImportLichess
+  - partie_en_cours : Partie
+  + demarrer_partie(mode, couleur) : Partie
+  + suivre_partie() : void
+  + conseiller_coup() : str
+  + expliquer_coup() : str
+  + jouer_contre_moi() : Coup
+  + analyser_partie() : Analyse
+  + importer_partie(id_lichess) : Partie
+  + exporter_pgn() : str
+}
+
+package "Outils" #F4F9FD {
+  class Lunettes {
+    + prendre_photo() : bytes
+    + ecouter() : str
+    + parler(texte) : void
+    + afficher(texte) : void
+  }
+
+  class ReconnaissancePlateau {
+    - modele : str
+    + detecter_position(photo) : Position
+  }
+
+  class MoteurEchecs {
+    - chemin_stockfish : str
+    - profondeur : int
+    + evaluer(position) : Evaluation
+    + analyser(partie) : Analyse
+  }
+
+  class AssistantLLM {
+    - modele : str
+    + expliquer(position, evaluation) : str
+  }
+
+  class ImportLichess {
+    - token : str
+    + recuperer_partie(id) : Partie
+  }
+
+  class Historique {
+    - dossier : str
+    + sauvegarder(partie) : void
+    + charger(id) : Partie
+    + lister() : list<Partie>
+  }
+}
+
+package "Jeu" #FFFBEA {
+  class Partie {
+    - id : str
+    - date : datetime
+    - mode : ModeJeu
+    - couleur_joueur : Couleur
+    - coups : list<Coup>
+    + jouer(coup) : void
+    + position_actuelle() : Position
+    + peut_conseiller() : bool
+    + est_terminee() : bool
+    + vers_pgn() : str
+  }
+
+  class Position {
+    - fen : str
+    - trait : Couleur
+    + coups_legaux() : list<Coup>
+  }
+
+  class Coup {
+    - notation : str
+    - couleur : Couleur
+  }
+
+  enum ModeJeu {
+    ENTRAINEMENT
+    AMICAL
+    OFFICIEL
+  }
+
+  enum Couleur {
+    BLANC
+    NOIR
+  }
+}
+
+package "Résultats" #FDF2F2 {
+  class Evaluation {
+    - meilleur_coup : Coup
+    - score : int
+    - mat_en : int
+  }
+
+  class Analyse {
+    - precision : float
+    - erreurs : list<Erreur>
+    + resume() : str
+  }
+
+  class Erreur {
+    - coup : Coup
+    - perte : int
+    - gravite : Gravite
+  }
+
+  enum Gravite {
+    IMPRECISION
+    ERREUR
+    GAFFE
+  }
+}
+
+Jarvis o-- Lunettes
+Jarvis o-- ReconnaissancePlateau
+Jarvis o-- MoteurEchecs
+Jarvis o-- AssistantLLM
+Jarvis o-- ImportLichess
+Jarvis o-- Historique
+Jarvis --> "0..1" Partie : partie en cours
+
+ReconnaissancePlateau ..> Position : crée
+MoteurEchecs ..> Evaluation : crée
+MoteurEchecs ..> Analyse : crée
+ImportLichess ..> Partie : crée
+
+Historique o-- "0..*" Partie
+Partie *-- "0..*" Coup
+Analyse *-- "0..*" Erreur
+
+note right of Partie
+  En mode OFFICIEL, peut_conseiller()
+  renvoie False : pas d'aide pendant
+  une partie de tournoi.
+end note
+@enduml
