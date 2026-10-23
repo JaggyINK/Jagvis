@@ -85,7 +85,7 @@ def test_HIS06_un_fichier_avec_un_coup_faux_est_corrompu(tmp_path):
     historique = Historique(str(tmp_path))
     historique.sauvegarder(nouvelle_partie())
     fichier = tmp_path / "abc123.json"
-    fichier.write_text(fichier.read_text(encoding="utf-8").replace('"e5"', '"e6"'), encoding="utf-8")
+    fichier.write_text(fichier.read_text(encoding="utf-8").replace('"e4"', '"e7"'), encoding="utf-8")
 
     with pytest.raises(HistoriqueCorrompu):
         historique.charger("abc123")
