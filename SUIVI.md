@@ -4,7 +4,7 @@
 > fil et à faciliter la revue de code : ce qui est fait, pourquoi, où le vérifier,
 > et ce qui reste à faire.
 >
-> Dernière mise à jour : 23/10/2026, demande n°5. Branche : `feature/jarvis-chess`.
+> Dernière mise à jour : 23/10/2026, demande n°6. Branche : `feature/jarvis-chess`.
 
 ---
 
@@ -359,3 +359,4 @@ ne vérifient jamais le texte d'un LLM, seulement des effets.
 | 3 | 23/10/2026 | Repo renommé ; code en anglais simple ; décider seul de la section 4 ; supprimer les fichiers inutiles | `origin` → `Jagvis.git` ; branches vérifiées ; code traduit (`jagvis_chess`) ; décisions 4, 5 et 7 changées + plafond des scores + roques (TDD) ; suppression de `__main__.py`, `.coveragerc`, des `__init__.py` vides des tests et de 2 copies en double ; 202 tests, 100 % |
 | 4 | 23/10/2026 | Les fichiers de l'appli (`db.py`, `jagvis_agent.py`…) sont-ils nécessaires ? Si non, les effacer ; architecture propre | Ils formaient l'appli de conversation : retirés de cette branche à ta demande (toujours sur `main`) ; `jagvis.db` supprimé par toi ; diagrammes rangés dans `docs/diagrams/` avec des noms anglais ; `streamlit` retiré des dépendances ; `.gitignore` réduit à l'utile ; README réécrit ; branche renommée `feature/jarvis-chess` ; 202 tests, 100 % |
 | 5 | 23/10/2026 | Pousser ; mettre à jour le suivi ; expliquer le schéma de l'app ; humaniser et simplifier le code ; commentaires en français | `docs/ARCHITECTURE.md` (cas d'utilisation, classes, flux, garde-fous, tests, schémas Mermaid) ; code simplifié (docstrings inutiles, `__repr__`, `__init__.py` du paquet retirés), commentaires courts et en français ; 201 tests, 100 % ; push de `feature/jarvis-chess` et mise à jour de `prof` |
+| 6 | 23/10/2026 | Retirer l'étape 5 d'ARCHITECTURE.md ; aucune mention de Claude dans le dépôt ni dans les commits poussés | Ligne retirée ; messages des 48 commits réécrits sans la ligne `Co-Authored-By` (contenu des fichiers identique) ; `feature/jarvis-chess` remplacée sur GitHub avec `--force-with-lease` |
